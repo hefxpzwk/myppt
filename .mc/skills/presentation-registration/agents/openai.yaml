@@ -1,0 +1,4 @@
+interface:
+  display_name: "Presentation Registration"
+  short_description: "Manage slide entries and metadata safely."
+  default_prompt: "Add or update a presentation in this repository while keeping slide paths, metadata, and docs consistent."

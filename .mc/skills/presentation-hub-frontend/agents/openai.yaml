@@ -1,0 +1,4 @@
+interface:
+  display_name: "Presentation Hub Frontend"
+  short_description: "Build static presentation hub UI safely."
+  default_prompt: "Work on the dashboard or presentation viewer in this repository without breaking the static frontend constraints."
