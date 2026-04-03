@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Welcome Deck</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: 'IBM Plex Sans KR', 'Noto Sans KR', sans-serif;
+        background: linear-gradient(135deg, #08363f 0%, #2a7f76 45%, #c8d8ce 100%);
+        color: #f9fafb;
+      }
+
+      .slide {
+        width: min(900px, 86vw);
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 56px;
+        backdrop-filter: blur(6px);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 4vw, 3rem);
+      }
+
+      p {
+        margin: 0;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+      }
+    </style>
+  </head>
+  <body>
+    <article class="slide">
+      <h1>Presentation Hub Ready</h1>
+      <p>초기 세팅이 완료되었습니다. 이 파일은 샘플 발표입니다.</p>
+    </article>
+  </body>
+</html>
