@@ -43,8 +43,6 @@ export function DashboardPage() {
     });
   }, [searchQuery, selectedTag, sortKey]);
 
-  const summaryUsageRatio = Math.min(100, Math.round((presentations.length / 20) * 100));
-
   return (
     <main className="app-shell dashboard-page">
       <section className="dashboard-canvas">
@@ -58,29 +56,6 @@ export function DashboardPage() {
             </p>
           </div>
         </header>
-
-        <section className="dashboard-section" aria-label="key metrics">
-          <div className="dashboard-section__header">
-            <h2 className="dashboard-section__title">Key Metrics</h2>
-          </div>
-          <div className="dashboard-summary">
-            <article className="summary-card">
-              <p className="summary-card__label">Saved Content</p>
-              <p className="summary-card__value">{presentations.length}</p>
-              <p className="summary-card__meta">Content storage is unlimited</p>
-            </article>
-            <article className="summary-card">
-              <p className="summary-card__label">AI Summaries</p>
-              <p className="summary-card__value">{summaryUsageRatio}%</p>
-              <p className="summary-card__meta">{presentations.length}/20 summaries used this month</p>
-            </article>
-            <article className="summary-card">
-              <p className="summary-card__label">Current Plan</p>
-              <p className="summary-card__value">FREE</p>
-              <p className="summary-card__meta">Using Free plan</p>
-            </article>
-          </div>
-        </section>
 
         <section className="dashboard-section" id="presentation-library" aria-label="presentation library">
           <div className="dashboard-section__header">
