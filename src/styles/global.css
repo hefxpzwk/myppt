@@ -293,16 +293,34 @@ a {
 }
 
 .presentation-grid {
-  margin-top: 10px;
+  margin-top: 14px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.presentation-gallery-item {
   display: grid;
   gap: 10px;
+  align-content: start;
 }
 
 .presentation-card {
   border: 2px solid #d2c09c;
-  border-radius: 12px;
+  border-radius: 16px;
   background: #ffffff;
-  padding: 12px;
+  padding: 12px 12px 14px;
+  box-shadow: 0 10px 24px rgba(66, 58, 36, 0.09);
+}
+
+.presentation-card__cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  border: 1px solid #e9dfcb;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.85), transparent 55%),
+    linear-gradient(135deg, #d7b875, #b38a3f);
 }
 
 .presentation-card--empty {
@@ -330,17 +348,22 @@ a {
 }
 
 .presentation-card__meta {
-  margin: 4px 0 10px;
+  margin: 4px 0 0;
   color: #59544a;
   font-size: 0.74rem;
   font-weight: 800;
 }
 
 .presentation-card__desc {
-  margin: 5px 0 0;
+  margin: 8px 0 0;
   color: #5f5a4f;
   font-size: 0.8rem;
   font-weight: 700;
+  line-height: 1.5;
+}
+
+.presentation-gallery-item__action {
+  width: 100%;
 }
 
 .dashboard-onboarding-card {

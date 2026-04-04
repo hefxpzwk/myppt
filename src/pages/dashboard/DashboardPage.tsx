@@ -110,16 +110,22 @@ export function DashboardPage() {
 
         <div className="presentation-grid" aria-label="presentation list">
           {filteredPresentations.map((presentation) => (
-            <article key={presentation.id} className="presentation-card">
-              <p className="presentation-card__badge">
-                {presentation.featured ? 'Featured' : 'Standard'}
-              </p>
-              <h3>{presentation.title}</h3>
-              <p className="presentation-card__meta">{presentation.updatedAt}</p>
-              <a className="button" href={`/presentation/${presentation.id}`}>
+            <div key={presentation.id} className="presentation-gallery-item">
+              <article className="presentation-card">
+                <div className="presentation-card__cover" aria-hidden="true" />
+                <p className="presentation-card__badge">
+                  {presentation.featured ? 'Featured' : 'Standard'}
+                </p>
+                <h3>{presentation.title}</h3>
+                <p className="presentation-card__meta">{presentation.updatedAt}</p>
+                {presentation.description ? (
+                  <p className="presentation-card__desc">{presentation.description}</p>
+                ) : null}
+              </article>
+              <a className="button presentation-gallery-item__action" href={`/presentation/${presentation.id}`}>
                 Open Presentation
               </a>
-            </article>
+            </div>
           ))}
 
           {filteredPresentations.length === 0 ? (
