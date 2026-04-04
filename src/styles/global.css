@@ -57,12 +57,56 @@ a {
   gap: 16px;
 }
 
+.filter-panel {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 12px;
+}
+
+.filter-control {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.filter-input,
+.filter-select {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text);
+  font: inherit;
+  padding: 0 12px;
+}
+
+.filter-meta {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
 .presentation-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   padding: 20px;
+}
+
+.presentation-card--empty {
+  grid-column: 1 / -1;
 }
 
 .presentation-card__badge {
@@ -138,6 +182,10 @@ a {
 @media (max-width: 720px) {
   .top-bar {
     flex-direction: column;
+  }
+
+  .filter-controls {
+    grid-template-columns: 1fr;
   }
 
   .viewer-frame-wrap {
