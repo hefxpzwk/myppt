@@ -301,8 +301,9 @@ a {
 
 .presentation-gallery-item {
   display: grid;
-  gap: 10px;
   align-content: start;
+  text-decoration: none;
+  color: inherit;
 }
 
 .presentation-card {
@@ -362,8 +363,14 @@ a {
   line-height: 1.5;
 }
 
-.presentation-gallery-item__action {
-  width: 100%;
+.presentation-gallery-item .presentation-card {
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.presentation-gallery-item:hover .presentation-card {
+  transform: translateY(-2px);
+  border-color: #be9f62;
+  box-shadow: 0 14px 28px rgba(66, 58, 36, 0.14);
 }
 
 .dashboard-onboarding-card {

@@ -110,7 +110,12 @@ export function DashboardPage() {
 
         <div className="presentation-grid" aria-label="presentation list">
           {filteredPresentations.map((presentation) => (
-            <div key={presentation.id} className="presentation-gallery-item">
+            <a
+              key={presentation.id}
+              className="presentation-gallery-item"
+              href={`/presentation/${presentation.id}`}
+              aria-label={`${presentation.title} open presentation`}
+            >
               <article className="presentation-card">
                 <div className="presentation-card__cover" aria-hidden="true" />
                 <p className="presentation-card__badge">
@@ -122,10 +127,7 @@ export function DashboardPage() {
                   <p className="presentation-card__desc">{presentation.description}</p>
                 ) : null}
               </article>
-              <a className="button presentation-gallery-item__action" href={`/presentation/${presentation.id}`}>
-                Open Presentation
-              </a>
-            </div>
+            </a>
           ))}
 
           {filteredPresentations.length === 0 ? (
