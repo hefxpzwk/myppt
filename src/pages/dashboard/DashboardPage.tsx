@@ -1,14 +1,6 @@
 import { useMemo, useState } from 'react';
 import { presentations } from '../../data/slides';
 
-function formatTags(tags?: string[]): string {
-  if (!tags || tags.length === 0) {
-    return 'untagged';
-  }
-
-  return tags.join(' · ');
-}
-
 function parseDate(updatedAt: string): number {
   return new Date(updatedAt).getTime() || 0;
 }
@@ -76,7 +68,6 @@ export function DashboardPage() {
           </div>
           <div className="dashboard-cta-card">
             <p className="dashboard-cta-card__title">Quick Launch</p>
-            <p className="dashboard-cta-card__meta">최신 발표를 바로 실행하거나 라이브러리로 이동합니다.</p>
             <div className="dashboard-cta-card__actions">
               {latestPresentation ? (
                 <a className="button" href={`/presentation/${latestPresentation.id}`}>
@@ -94,17 +85,14 @@ export function DashboardPage() {
           <article className="summary-card">
             <p className="summary-card__label">Total Presentations</p>
             <p className="summary-card__value">{presentations.length}</p>
-            <p className="summary-card__meta">등록된 발표 메타데이터</p>
           </article>
           <article className="summary-card">
             <p className="summary-card__label">Featured Decks</p>
             <p className="summary-card__value">{featuredCount}</p>
-            <p className="summary-card__meta">featured 플래그가 있는 발표</p>
           </article>
           <article className="summary-card">
             <p className="summary-card__label">Available Tags</p>
             <p className="summary-card__value">{availableTags.length}</p>
-            <p className="summary-card__meta">필터 가능한 태그 종류</p>
           </article>
         </section>
 
@@ -167,17 +155,7 @@ export function DashboardPage() {
                   {presentation.featured ? 'Featured' : 'Standard'}
                 </p>
                 <h3>{presentation.title}</h3>
-                <p className="presentation-card__desc">{presentation.description ?? '설명 없음'}</p>
-                <dl>
-                  <div>
-                    <dt>Updated</dt>
-                    <dd>{presentation.updatedAt}</dd>
-                  </div>
-                  <div>
-                    <dt>Tags</dt>
-                    <dd>{formatTags(presentation.tags)}</dd>
-                  </div>
-                </dl>
+                <p className="presentation-card__meta">{presentation.updatedAt}</p>
                 <a className="button" href={`/presentation/${presentation.id}`}>
                   Open Presentation
                 </a>

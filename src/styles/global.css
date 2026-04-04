@@ -244,6 +244,12 @@ a {
   font-size: 0.93rem;
 }
 
+.presentation-card__meta {
+  margin: 5px 0 8px;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+}
+
 .presentation-card__desc {
   margin: 5px 0 0;
   color: var(--color-muted);
