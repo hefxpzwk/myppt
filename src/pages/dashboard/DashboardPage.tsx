@@ -82,30 +82,6 @@ export function DashboardPage() {
           </div>
         </section>
 
-        <section className="dashboard-section" aria-label="quick actions">
-          <div className="dashboard-section__header">
-            <h2 className="dashboard-section__title">Quick Actions</h2>
-          </div>
-          <div className="quick-action-grid">
-            <a className="quick-action-card" href="#presentation-library">
-              <h3>View Content</h3>
-              <p>Browse and search your saved presentations.</p>
-            </a>
-            <a className="quick-action-card" href="#presentation-library">
-              <h3>Manage Library</h3>
-              <p>Filter by tag and sort your decks quickly.</p>
-            </a>
-            <a className="quick-action-card" href="#presentation-library">
-              <h3>Install Extension</h3>
-              <p>Capture references in one click while you browse.</p>
-            </a>
-            <a className="quick-action-card" href="#presentation-library">
-              <h3>Get Support</h3>
-              <p>Open usage guide and workflow tips.</p>
-            </a>
-          </div>
-        </section>
-
         <section className="dashboard-section" id="presentation-library" aria-label="presentation library">
           <div className="dashboard-section__header">
             <h2 className="dashboard-section__title">Presentation Library</h2>
