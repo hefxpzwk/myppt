@@ -45,93 +45,90 @@ export function DashboardPage() {
 
   return (
     <main className="app-shell dashboard-page">
-      <section className="dashboard-canvas">
-        <header className="dashboard-header">
-          <div>
-            <h1>
-              Content Insight <span>Workspace</span>
-            </h1>
-            <p className="dashboard-header__subtitle">
-              Save content, summarize with AI, and connect insights faster.
-            </p>
-          </div>
-        </header>
+      <header className="dashboard-header">
+        <div>
+          <h1>
+            Content Insight <span>Workspace</span>
+          </h1>
+          <p className="dashboard-header__subtitle">
+            Save content, summarize with AI, and connect insights faster.
+          </p>
+        </div>
+      </header>
 
-        <section className="dashboard-section" id="presentation-library" aria-label="presentation library">
-          <div className="dashboard-section__header">
-            <h2 className="dashboard-section__title">Presentation Library</h2>
-            <p className="dashboard-section__meta">
-              {filteredPresentations.length} / {presentations.length}
-            </p>
-          </div>
+      <section className="dashboard-section" id="presentation-library" aria-label="presentation library">
+        <div className="dashboard-section__header">
+          <h2 className="dashboard-section__title">Presentation Library</h2>
+          <p className="dashboard-section__meta">
+            {filteredPresentations.length} / {presentations.length}
+          </p>
+        </div>
 
-          <div className="dashboard-control-row">
-            <label className="dashboard-filter" htmlFor="search-query">
-              Search
-              <input
-                id="search-query"
-                type="search"
-                className="dashboard-filter__input"
-                placeholder="Search title, description, tags"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-              />
-            </label>
+        <div className="dashboard-control-row">
+          <label className="dashboard-filter" htmlFor="search-query">
+            Search
+            <input
+              id="search-query"
+              type="search"
+              className="dashboard-filter__input"
+              placeholder="Search title, description, tags"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+          </label>
 
-            <label className="dashboard-filter" htmlFor="tag-filter">
-              Tag
-              <select
-                id="tag-filter"
-                className="dashboard-filter__select"
-                value={selectedTag}
-                onChange={(event) => setSelectedTag(event.target.value)}
-              >
-                <option value="all">All Tags</option>
-                {availableTags.map((tag) => (
-                  <option key={tag} value={tag}>
-                    {tag}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <label className="dashboard-filter" htmlFor="tag-filter">
+            Tag
+            <select
+              id="tag-filter"
+              className="dashboard-filter__select"
+              value={selectedTag}
+              onChange={(event) => setSelectedTag(event.target.value)}
+            >
+              <option value="all">All Tags</option>
+              {availableTags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+          </label>
 
-            <label className="dashboard-filter" htmlFor="sort-key">
-              Sort
-              <select
-                id="sort-key"
-                className="dashboard-filter__select"
-                value={sortKey}
-                onChange={(event) => setSortKey(event.target.value as 'updated' | 'title')}
-              >
-                <option value="updated">Latest Updated</option>
-                <option value="title">Title A-Z</option>
-              </select>
-            </label>
-          </div>
+          <label className="dashboard-filter" htmlFor="sort-key">
+            Sort
+            <select
+              id="sort-key"
+              className="dashboard-filter__select"
+              value={sortKey}
+              onChange={(event) => setSortKey(event.target.value as 'updated' | 'title')}
+            >
+              <option value="updated">Latest Updated</option>
+              <option value="title">Title A-Z</option>
+            </select>
+          </label>
+        </div>
 
-          <div className="presentation-grid" aria-label="presentation list">
-            {filteredPresentations.map((presentation) => (
-              <article key={presentation.id} className="presentation-card">
-                <p className="presentation-card__badge">
-                  {presentation.featured ? 'Featured' : 'Standard'}
-                </p>
-                <h3>{presentation.title}</h3>
-                <p className="presentation-card__meta">{presentation.updatedAt}</p>
-                <a className="button" href={`/presentation/${presentation.id}`}>
-                  Open Presentation
-                </a>
-              </article>
-            ))}
+        <div className="presentation-grid" aria-label="presentation list">
+          {filteredPresentations.map((presentation) => (
+            <article key={presentation.id} className="presentation-card">
+              <p className="presentation-card__badge">
+                {presentation.featured ? 'Featured' : 'Standard'}
+              </p>
+              <h3>{presentation.title}</h3>
+              <p className="presentation-card__meta">{presentation.updatedAt}</p>
+              <a className="button" href={`/presentation/${presentation.id}`}>
+                Open Presentation
+              </a>
+            </article>
+          ))}
 
-            {filteredPresentations.length === 0 ? (
-              <article className="presentation-card presentation-card--empty">
-                <h3>No matching content</h3>
-                <p className="presentation-card__desc">Try adjusting your search or filters.</p>
-              </article>
-            ) : null}
-          </div>
-        </section>
-
+          {filteredPresentations.length === 0 ? (
+            <article className="presentation-card presentation-card--empty">
+              <h3>No matching content</h3>
+              <p className="presentation-card__desc">Try adjusting your search or filters.</p>
+            </article>
+          ) : null}
+        </div>
       </section>
     </main>
   );
