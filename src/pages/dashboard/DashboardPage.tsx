@@ -68,15 +68,15 @@ export function DashboardPage() {
           <div>
             <p className="dashboard-header__chip">MyPPT Presentation Hub</p>
             <h1>
-              발표 탐색과 실행을 위한 <span>통합 대시보드</span>
+              발표 운영을 위한 <span>실무형 대시보드</span>
             </h1>
             <p className="dashboard-header__subtitle">
-              레퍼런스의 비주얼 톤만 유지하고, UX는 발표 운영 흐름에 맞게 구성했습니다.
+              검색, 필터, 정렬 후 즉시 발표 화면으로 진입할 수 있습니다.
             </p>
           </div>
           <div className="dashboard-cta-card">
-            <p className="dashboard-cta-card__title">빠른 시작</p>
-            <p className="dashboard-cta-card__meta">최근 발표를 바로 열거나 전체 목록을 탐색하세요.</p>
+            <p className="dashboard-cta-card__title">Quick Launch</p>
+            <p className="dashboard-cta-card__meta">최신 발표를 바로 실행하거나 라이브러리로 이동합니다.</p>
             <div className="dashboard-cta-card__actions">
               {latestPresentation ? (
                 <a className="button" href={`/presentation/${latestPresentation.id}`}>
