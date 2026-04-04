@@ -94,9 +94,9 @@ a {
 
 .dashboard-cta-card {
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 14px;
   background: #fdfdfc;
-  padding: 12px;
+  padding: 10px;
   box-shadow: var(--shadow-soft);
 }
 
@@ -104,28 +104,28 @@ a {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--color-muted);
   font-weight: 700;
 }
 
 .dashboard-cta-card__meta {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: #5b5956;
-  font-size: 0.8rem;
+  font-size: 0.76rem;
 }
 
 .dashboard-cta-card__actions {
-  margin-top: 10px;
+  margin-top: 8px;
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .dashboard-summary {
   margin-top: 14px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .summary-card {
@@ -133,27 +133,27 @@ a {
   border-radius: var(--radius-md);
   background: #fff;
   box-shadow: var(--shadow-soft);
-  padding: 12px;
+  padding: 10px;
 }
 
 .summary-card__label {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.11em;
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   color: #989389;
 }
 
 .summary-card__value {
-  margin: 6px 0 0;
-  font-size: 1.5rem;
+  margin: 5px 0 0;
+  font-size: 1.34rem;
   font-weight: 800;
 }
 
 .summary-card__meta {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
   color: var(--color-muted);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
 }
 
 .dashboard-section {
@@ -213,15 +213,15 @@ a {
 .presentation-grid {
   margin-top: 10px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
 }
 
 .presentation-card {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface-strong);
-  padding: 11px;
+  padding: 9px;
 }
 
 .presentation-card--empty {
@@ -231,23 +231,23 @@ a {
 .presentation-card__badge {
   margin: 0;
   display: inline-flex;
-  padding: 4px 8px;
+  padding: 3px 7px;
   border-radius: 999px;
   background: rgba(215, 179, 57, 0.2);
   color: #9a7a0d;
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
 .presentation-card h3 {
-  margin: 8px 0 0;
-  font-size: 1rem;
+  margin: 7px 0 0;
+  font-size: 0.93rem;
 }
 
 .presentation-card__desc {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
   color: var(--color-muted);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -256,13 +256,13 @@ a {
 }
 
 .presentation-card dl {
-  margin: 8px 0 10px;
+  margin: 7px 0 8px;
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .presentation-card dt {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #9a968d;
@@ -270,7 +270,7 @@ a {
 
 .presentation-card dd {
   margin: 2px 0 0;
-  font-size: 0.86rem;
+  font-size: 0.8rem;
 }
 
 .top-bar {
