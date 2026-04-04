@@ -49,12 +49,6 @@ export function DashboardPage() {
     })[0];
   }, []);
 
-  const recentPresentations = useMemo(() => {
-    return [...presentations]
-      .sort((left, right) => parseDate(right.updatedAt) - parseDate(left.updatedAt))
-      .slice(0, 3);
-  }, []);
-
   const summaryUsageRatio = Math.min(100, Math.round((presentations.length / 20) * 100));
 
   return (
@@ -129,30 +123,6 @@ export function DashboardPage() {
               <h3>Get Support</h3>
               <p>Open usage guide and workflow tips.</p>
             </a>
-          </div>
-        </section>
-
-        <section className="dashboard-section" aria-label="recent content">
-          <div className="dashboard-section__header">
-            <h2 className="dashboard-section__title">Recent Content</h2>
-          </div>
-          <div className="recent-content-board">
-            {recentPresentations.length > 0 ? (
-              <div className="recent-content-list">
-                {recentPresentations.map((presentation) => (
-                  <a
-                    key={presentation.id}
-                    className="recent-content-item"
-                    href={`/presentation/${presentation.id}`}
-                  >
-                    <p className="recent-content-item__title">{presentation.title}</p>
-                    <p className="recent-content-item__meta">Updated {presentation.updatedAt}</p>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <p className="recent-content-board__empty">No content saved yet.</p>
-            )}
           </div>
         </section>
 
