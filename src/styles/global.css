@@ -46,9 +46,9 @@ a {
 
 .app-shell,
 .viewer-shell {
-  width: 100%;
+  width: min(100%, 1240px);
   margin: 0 auto;
-  padding: 20px 16px 36px;
+  padding: 20px clamp(20px, 3.5vw, 40px) 36px;
 }
 
 .dashboard-page {
