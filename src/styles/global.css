@@ -94,7 +94,7 @@ a {
 
 .dashboard-cta-card {
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: #fdfdfc;
   padding: 10px;
   box-shadow: var(--shadow-soft);
@@ -116,24 +116,26 @@ a {
 }
 
 .dashboard-cta-card__actions {
-  margin-top: 8px;
-  display: grid;
-  gap: 5px;
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .dashboard-summary {
-  margin-top: 14px;
+  margin-top: 12px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+  padding: 0;
 }
 
 .summary-card {
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: 10px;
   background: #fff;
   box-shadow: var(--shadow-soft);
-  padding: 10px;
+  padding: 8px 10px;
 }
 
 .summary-card__label {
@@ -158,10 +160,10 @@ a {
 
 .dashboard-section {
   margin-top: 14px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.74);
-  padding: 12px;
+  border-top: 1px solid #ddd7cb;
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 0 0;
 }
 
 .dashboard-section__header {
@@ -212,31 +214,30 @@ a {
 
 .presentation-grid {
   margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 8px;
+  display: block;
 }
 
 .presentation-card {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-strong);
-  padding: 9px;
+  border: 0;
+  border-bottom: 1px solid #e0ddd5;
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 0;
 }
 
 .presentation-card--empty {
-  grid-column: 1 / -1;
+  padding: 12px 0;
 }
 
 .presentation-card__badge {
   margin: 0;
-  display: inline-flex;
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: rgba(215, 179, 57, 0.2);
-  color: #9a7a0d;
-  font-size: 0.72rem;
-  font-weight: 600;
+  display: inline-block;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #8b877f;
+  font-size: 0.7rem;
+  font-weight: 500;
 }
 
 .presentation-card h3 {
