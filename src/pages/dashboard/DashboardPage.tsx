@@ -43,12 +43,6 @@ export function DashboardPage() {
     });
   }, [searchQuery, selectedTag, sortKey]);
 
-  const latestPresentation = useMemo(() => {
-    return [...presentations].sort((left, right) => {
-      return parseDate(right.updatedAt) - parseDate(left.updatedAt);
-    })[0];
-  }, []);
-
   const summaryUsageRatio = Math.min(100, Math.round((presentations.length / 20) * 100));
 
   return (
@@ -62,20 +56,6 @@ export function DashboardPage() {
             <p className="dashboard-header__subtitle">
               Save content, summarize with AI, and connect insights faster.
             </p>
-          </div>
-          <div className="dashboard-cta-card">
-            <p className="dashboard-cta-card__title">Quick Start</p>
-            <div className="dashboard-cta-card__actions">
-              {latestPresentation ? (
-                <a className="button" href={`/presentation/${latestPresentation.id}`}>
-                  View Content
-                </a>
-              ) : (
-                <a className="button" href="#presentation-library">
-                  View Content
-                </a>
-              )}
-            </div>
           </div>
         </header>
 
