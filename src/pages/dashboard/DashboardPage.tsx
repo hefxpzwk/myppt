@@ -16,10 +16,6 @@ export function DashboardPage() {
     ).sort((a, b) => a.localeCompare(b));
   }, []);
 
-  const featuredCount = useMemo(() => {
-    return presentations.filter((presentation) => presentation.featured).length;
-  }, []);
-
   const filteredPresentations = useMemo(() => {
     const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
@@ -53,52 +49,116 @@ export function DashboardPage() {
     })[0];
   }, []);
 
+  const recentPresentations = useMemo(() => {
+    return [...presentations]
+      .sort((left, right) => parseDate(right.updatedAt) - parseDate(left.updatedAt))
+      .slice(0, 3);
+  }, []);
+
+  const summaryUsageRatio = Math.min(100, Math.round((presentations.length / 20) * 100));
+
   return (
     <main className="app-shell dashboard-page">
       <section className="dashboard-canvas">
         <header className="dashboard-header">
           <div>
-            <p className="dashboard-header__chip">MyPPT Presentation Hub</p>
             <h1>
-              발표 운영을 위한 <span>실무형 대시보드</span>
+              Content Insight <span>Workspace</span>
             </h1>
             <p className="dashboard-header__subtitle">
-              검색, 필터, 정렬 후 즉시 발표 화면으로 진입할 수 있습니다.
+              Save content, summarize with AI, and connect insights faster.
             </p>
           </div>
           <div className="dashboard-cta-card">
-            <p className="dashboard-cta-card__title">Quick Launch</p>
+            <p className="dashboard-cta-card__title">Quick Start</p>
             <div className="dashboard-cta-card__actions">
               {latestPresentation ? (
                 <a className="button" href={`/presentation/${latestPresentation.id}`}>
-                  최근 발표 열기
+                  View Content
                 </a>
-              ) : null}
-              <a className="button button--ghost" href="#presentation-library">
-                목록으로 이동
-              </a>
+              ) : (
+                <a className="button" href="#presentation-library">
+                  View Content
+                </a>
+              )}
             </div>
           </div>
         </header>
 
-        <section className="dashboard-summary" aria-label="dashboard summary">
-          <article className="summary-card">
-            <p className="summary-card__label">Total Presentations</p>
-            <p className="summary-card__value">{presentations.length}</p>
-          </article>
-          <article className="summary-card">
-            <p className="summary-card__label">Featured Decks</p>
-            <p className="summary-card__value">{featuredCount}</p>
-          </article>
-          <article className="summary-card">
-            <p className="summary-card__label">Available Tags</p>
-            <p className="summary-card__value">{availableTags.length}</p>
-          </article>
+        <section className="dashboard-section" aria-label="key metrics">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Key Metrics</h2>
+          </div>
+          <div className="dashboard-summary">
+            <article className="summary-card">
+              <p className="summary-card__label">Saved Content</p>
+              <p className="summary-card__value">{presentations.length}</p>
+              <p className="summary-card__meta">Content storage is unlimited</p>
+            </article>
+            <article className="summary-card">
+              <p className="summary-card__label">AI Summaries</p>
+              <p className="summary-card__value">{summaryUsageRatio}%</p>
+              <p className="summary-card__meta">{presentations.length}/20 summaries used this month</p>
+            </article>
+            <article className="summary-card">
+              <p className="summary-card__label">Current Plan</p>
+              <p className="summary-card__value">FREE</p>
+              <p className="summary-card__meta">Using Free plan</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="dashboard-section" aria-label="quick actions">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Quick Actions</h2>
+          </div>
+          <div className="quick-action-grid">
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>View Content</h3>
+              <p>Browse and search your saved presentations.</p>
+            </a>
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>Manage Library</h3>
+              <p>Filter by tag and sort your decks quickly.</p>
+            </a>
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>Install Extension</h3>
+              <p>Capture references in one click while you browse.</p>
+            </a>
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>Get Support</h3>
+              <p>Open usage guide and workflow tips.</p>
+            </a>
+          </div>
+        </section>
+
+        <section className="dashboard-section" aria-label="recent content">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Recent Content</h2>
+          </div>
+          <div className="recent-content-board">
+            {recentPresentations.length > 0 ? (
+              <div className="recent-content-list">
+                {recentPresentations.map((presentation) => (
+                  <a
+                    key={presentation.id}
+                    className="recent-content-item"
+                    href={`/presentation/${presentation.id}`}
+                  >
+                    <p className="recent-content-item__title">{presentation.title}</p>
+                    <p className="recent-content-item__meta">Updated {presentation.updatedAt}</p>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="recent-content-board__empty">No content saved yet.</p>
+            )}
+          </div>
         </section>
 
         <section className="dashboard-section" id="presentation-library" aria-label="presentation library">
           <div className="dashboard-section__header">
-            <h2 className="dashboard-section__title">발표 라이브러리</h2>
+            <h2 className="dashboard-section__title">Presentation Library</h2>
             <p className="dashboard-section__meta">
               {filteredPresentations.length} / {presentations.length}
             </p>
@@ -106,19 +166,19 @@ export function DashboardPage() {
 
           <div className="dashboard-control-row">
             <label className="dashboard-filter" htmlFor="search-query">
-              검색
+              Search
               <input
                 id="search-query"
                 type="search"
                 className="dashboard-filter__input"
-                placeholder="제목, 설명, 태그 검색"
+                placeholder="Search title, description, tags"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
               />
             </label>
 
             <label className="dashboard-filter" htmlFor="tag-filter">
-              태그
+              Tag
               <select
                 id="tag-filter"
                 className="dashboard-filter__select"
@@ -135,15 +195,15 @@ export function DashboardPage() {
             </label>
 
             <label className="dashboard-filter" htmlFor="sort-key">
-              정렬
+              Sort
               <select
                 id="sort-key"
                 className="dashboard-filter__select"
                 value={sortKey}
                 onChange={(event) => setSortKey(event.target.value as 'updated' | 'title')}
               >
-                <option value="updated">최신 업데이트 순</option>
-                <option value="title">제목 가나다순</option>
+                <option value="updated">Latest Updated</option>
+                <option value="title">Title A-Z</option>
               </select>
             </label>
           </div>
@@ -164,12 +224,22 @@ export function DashboardPage() {
 
             {filteredPresentations.length === 0 ? (
               <article className="presentation-card presentation-card--empty">
-                <h3>검색 결과가 없습니다</h3>
-                <p className="presentation-card__desc">검색어 또는 필터를 조정해 다시 시도해 주세요.</p>
+                <h3>No matching content</h3>
+                <p className="presentation-card__desc">Try adjusting your search or filters.</p>
               </article>
             ) : null}
           </div>
         </section>
+
+        <aside className="dashboard-onboarding-card" aria-label="onboarding">
+          <p className="dashboard-onboarding-card__title">Finish your onboarding!</p>
+          <p className="dashboard-onboarding-card__desc">
+            Connect your browser extension to start capturing insights instantly.
+          </p>
+          <a className="button button--ghost" href="#presentation-library">
+            Setup Now
+          </a>
+        </aside>
       </section>
     </main>
   );
