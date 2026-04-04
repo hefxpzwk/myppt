@@ -37,9 +37,9 @@ a {
 
 .app-shell,
 .viewer-shell {
-  width: min(1100px, 92vw);
+  width: 100%;
   margin: 0 auto;
-  padding: 20px 0 36px;
+  padding: 20px 16px 36px;
 }
 
 .dashboard-page {
@@ -342,8 +342,8 @@ a {
 @media (max-width: 720px) {
   .app-shell,
   .viewer-shell {
-    width: min(1100px, 95vw);
-    padding: 14px 0 36px;
+    width: 100%;
+    padding: 14px 10px 36px;
   }
 
   .dashboard-canvas {
