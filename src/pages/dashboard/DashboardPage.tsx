@@ -1,18 +1,14 @@
 import { useMemo, useState } from 'react';
-import { TopBar } from '../../components/TopBar';
 import { presentations } from '../../data/slides';
 
-function formatTags(tags?: string[]): string {
-  if (!tags || tags.length === 0) {
-    return 'untagged';
-  }
-
-  return tags.join(' · ');
+function parseDate(updatedAt: string): number {
+  return new Date(updatedAt).getTime() || 0;
 }
 
 export function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('all');
+  const [sortKey, setSortKey] = useState<'updated' | 'title'>('updated');
 
   const availableTags = useMemo(() => {
     return Array.from(
@@ -23,7 +19,7 @@ export function DashboardPage() {
   const filteredPresentations = useMemo(() => {
     const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
-    return presentations.filter((presentation) => {
+    const filtered = presentations.filter((presentation) => {
       const tags = presentation.tags ?? [];
       const matchesTag = selectedTag === 'all' || tags.includes(selectedTag);
 
@@ -31,90 +27,219 @@ export function DashboardPage() {
         return matchesTag;
       }
 
-      const searchTarget = [
-        presentation.title,
-        presentation.description ?? '',
-        ...tags,
-      ]
+      const searchTarget = [presentation.title, presentation.description ?? '', ...tags]
         .join(' ')
         .toLowerCase();
 
       return matchesTag && searchTarget.includes(normalizedSearchQuery);
     });
-  }, [searchQuery, selectedTag]);
+
+    return filtered.sort((left, right) => {
+      if (sortKey === 'title') {
+        return left.title.localeCompare(right.title);
+      }
+
+      return parseDate(right.updatedAt) - parseDate(left.updatedAt);
+    });
+  }, [searchQuery, selectedTag, sortKey]);
+
+  const latestPresentation = useMemo(() => {
+    return [...presentations].sort((left, right) => {
+      return parseDate(right.updatedAt) - parseDate(left.updatedAt);
+    })[0];
+  }, []);
+
+  const recentPresentations = useMemo(() => {
+    return [...presentations]
+      .sort((left, right) => parseDate(right.updatedAt) - parseDate(left.updatedAt))
+      .slice(0, 3);
+  }, []);
+
+  const summaryUsageRatio = Math.min(100, Math.round((presentations.length / 20) * 100));
 
   return (
-    <main className="app-shell">
-      <TopBar
-        title="Presentation Dashboard"
-        subtitle="정적 메타데이터 기반으로 발표를 탐색하고 즉시 실행합니다."
-      />
-
-      <section className="filter-panel" aria-label="dashboard filter">
-        <div className="filter-controls">
-          <label className="filter-control" htmlFor="search-query">
-            Search
-            <input
-              id="search-query"
-              type="search"
-              className="filter-input"
-              placeholder="제목, 설명, 태그 검색"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <label className="filter-control" htmlFor="tag-filter">
-            Tag
-            <select
-              id="tag-filter"
-              className="filter-select"
-              value={selectedTag}
-              onChange={(event) => setSelectedTag(event.target.value)}
-            >
-              <option value="all">All Tags</option>
-              {availableTags.map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <p className="filter-meta">
-          {filteredPresentations.length} / {presentations.length} presentations
-        </p>
-      </section>
-
-      <section className="presentation-grid" aria-label="presentation list">
-        {filteredPresentations.map((presentation) => (
-          <article key={presentation.id} className="presentation-card">
-            <p className="presentation-card__badge">
-              {presentation.featured ? 'Featured' : 'Standard'}
+    <main className="app-shell dashboard-page">
+      <section className="dashboard-canvas">
+        <header className="dashboard-header">
+          <div>
+            <h1>
+              Content Insight <span>Workspace</span>
+            </h1>
+            <p className="dashboard-header__subtitle">
+              Save content, summarize with AI, and connect insights faster.
             </p>
-            <h2>{presentation.title}</h2>
-            <p>{presentation.description ?? '설명 없음'}</p>
-            <dl>
-              <div>
-                <dt>Updated</dt>
-                <dd>{presentation.updatedAt}</dd>
-              </div>
-              <div>
-                <dt>Tags</dt>
-                <dd>{formatTags(presentation.tags)}</dd>
-              </div>
-            </dl>
-            <a className="button" href={`/presentation/${presentation.id}`}>
-              Open Presentation
-            </a>
-          </article>
-        ))}
+          </div>
+          <div className="dashboard-cta-card">
+            <p className="dashboard-cta-card__title">Quick Start</p>
+            <div className="dashboard-cta-card__actions">
+              {latestPresentation ? (
+                <a className="button" href={`/presentation/${latestPresentation.id}`}>
+                  View Content
+                </a>
+              ) : (
+                <a className="button" href="#presentation-library">
+                  View Content
+                </a>
+              )}
+            </div>
+          </div>
+        </header>
 
-        {filteredPresentations.length === 0 ? (
-          <article className="presentation-card presentation-card--empty">
-            <h2>검색 결과가 없습니다</h2>
-            <p>검색어 또는 태그 필터를 조정해 다시 시도해 주세요.</p>
-          </article>
-        ) : null}
+        <section className="dashboard-section" aria-label="key metrics">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Key Metrics</h2>
+          </div>
+          <div className="dashboard-summary">
+            <article className="summary-card">
+              <p className="summary-card__label">Saved Content</p>
+              <p className="summary-card__value">{presentations.length}</p>
+              <p className="summary-card__meta">Content storage is unlimited</p>
+            </article>
+            <article className="summary-card">
+              <p className="summary-card__label">AI Summaries</p>
+              <p className="summary-card__value">{summaryUsageRatio}%</p>
+              <p className="summary-card__meta">{presentations.length}/20 summaries used this month</p>
+            </article>
+            <article className="summary-card">
+              <p className="summary-card__label">Current Plan</p>
+              <p className="summary-card__value">FREE</p>
+              <p className="summary-card__meta">Using Free plan</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="dashboard-section" aria-label="quick actions">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Quick Actions</h2>
+          </div>
+          <div className="quick-action-grid">
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>View Content</h3>
+              <p>Browse and search your saved presentations.</p>
+            </a>
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>Manage Library</h3>
+              <p>Filter by tag and sort your decks quickly.</p>
+            </a>
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>Install Extension</h3>
+              <p>Capture references in one click while you browse.</p>
+            </a>
+            <a className="quick-action-card" href="#presentation-library">
+              <h3>Get Support</h3>
+              <p>Open usage guide and workflow tips.</p>
+            </a>
+          </div>
+        </section>
+
+        <section className="dashboard-section" aria-label="recent content">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Recent Content</h2>
+          </div>
+          <div className="recent-content-board">
+            {recentPresentations.length > 0 ? (
+              <div className="recent-content-list">
+                {recentPresentations.map((presentation) => (
+                  <a
+                    key={presentation.id}
+                    className="recent-content-item"
+                    href={`/presentation/${presentation.id}`}
+                  >
+                    <p className="recent-content-item__title">{presentation.title}</p>
+                    <p className="recent-content-item__meta">Updated {presentation.updatedAt}</p>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="recent-content-board__empty">No content saved yet.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="dashboard-section" id="presentation-library" aria-label="presentation library">
+          <div className="dashboard-section__header">
+            <h2 className="dashboard-section__title">Presentation Library</h2>
+            <p className="dashboard-section__meta">
+              {filteredPresentations.length} / {presentations.length}
+            </p>
+          </div>
+
+          <div className="dashboard-control-row">
+            <label className="dashboard-filter" htmlFor="search-query">
+              Search
+              <input
+                id="search-query"
+                type="search"
+                className="dashboard-filter__input"
+                placeholder="Search title, description, tags"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+              />
+            </label>
+
+            <label className="dashboard-filter" htmlFor="tag-filter">
+              Tag
+              <select
+                id="tag-filter"
+                className="dashboard-filter__select"
+                value={selectedTag}
+                onChange={(event) => setSelectedTag(event.target.value)}
+              >
+                <option value="all">All Tags</option>
+                {availableTags.map((tag) => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="dashboard-filter" htmlFor="sort-key">
+              Sort
+              <select
+                id="sort-key"
+                className="dashboard-filter__select"
+                value={sortKey}
+                onChange={(event) => setSortKey(event.target.value as 'updated' | 'title')}
+              >
+                <option value="updated">Latest Updated</option>
+                <option value="title">Title A-Z</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="presentation-grid" aria-label="presentation list">
+            {filteredPresentations.map((presentation) => (
+              <article key={presentation.id} className="presentation-card">
+                <p className="presentation-card__badge">
+                  {presentation.featured ? 'Featured' : 'Standard'}
+                </p>
+                <h3>{presentation.title}</h3>
+                <p className="presentation-card__meta">{presentation.updatedAt}</p>
+                <a className="button" href={`/presentation/${presentation.id}`}>
+                  Open Presentation
+                </a>
+              </article>
+            ))}
+
+            {filteredPresentations.length === 0 ? (
+              <article className="presentation-card presentation-card--empty">
+                <h3>No matching content</h3>
+                <p className="presentation-card__desc">Try adjusting your search or filters.</p>
+              </article>
+            ) : null}
+          </div>
+        </section>
+
+        <aside className="dashboard-onboarding-card" aria-label="onboarding">
+          <p className="dashboard-onboarding-card__title">Finish your onboarding!</p>
+          <p className="dashboard-onboarding-card__desc">
+            Connect your browser extension to start capturing insights instantly.
+          </p>
+          <a className="button button--ghost" href="#presentation-library">
+            Setup Now
+          </a>
+        </aside>
       </section>
     </main>
   );
