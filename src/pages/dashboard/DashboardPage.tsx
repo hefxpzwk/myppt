@@ -35,7 +35,7 @@ export function DashboardPage() {
     });
 
     return filtered.sort((left, right) => {
-      if (sortKey === 'title') {
+      if (!normalizedSearchQuery && sortKey === 'title') {
         return left.title.localeCompare(right.title);
       }
 
