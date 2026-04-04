@@ -201,15 +201,6 @@ export function DashboardPage() {
           </div>
         </section>
 
-        <aside className="dashboard-onboarding-card" aria-label="onboarding">
-          <p className="dashboard-onboarding-card__title">Finish your onboarding!</p>
-          <p className="dashboard-onboarding-card__desc">
-            Connect your browser extension to start capturing insights instantly.
-          </p>
-          <a className="button button--ghost" href="#presentation-library">
-            Setup Now
-          </a>
-        </aside>
       </section>
     </main>
   );
