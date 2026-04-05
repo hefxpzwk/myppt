@@ -464,6 +464,7 @@ a {
 
 .viewer-frame-wrap {
   margin-top: 20px;
+  position: relative;
   border: 2px solid #d6c5a0;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -477,6 +478,20 @@ a {
   border: 0;
   border-radius: 0;
   height: 100vh;
+}
+
+.viewer-frame-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.viewer-frame-controls .button--icon {
+  background: rgba(18, 18, 18, 0.72);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
 }
 
 .viewer-frame {
