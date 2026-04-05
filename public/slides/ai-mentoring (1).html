@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개발자를 위한 AI 멘토링</title>
+    <style>
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-1Thin.woff2') format('woff2');
+            font-weight: 100;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-2ExtraLight.woff2') format('woff2');
+            font-weight: 200;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-3Light.woff2') format('woff2');
+            font-weight: 300;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-5Medium.woff2') format('woff2');
+            font-weight: 500;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-6SemiBold.woff2') format('woff2');
+            font-weight: 600;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-8ExtraBold.woff2') format('woff2');
+            font-weight: 800;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-9Black.woff2') format('woff2');
+            font-weight: 900;
+            font-display: swap;
+        }
+    </style>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #F4F0EC;
+            --text: #2A3540;
+            --accent: #81A6C6;
+            --muted: #888888;
+            --line: #D2C4B4;
+            --code-bg: #EDE7DF;
+            --card-bg: #EAE3DA;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg);
+            font-family: 'A2z', sans-serif;
+            color: var(--text);
+        }
+
+        #deck { width: 100vw; height: 100vh; position: relative; }
+
+        section {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8vh 10vw;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            background: var(--bg);
+        }
+
+        section.active { opacity: 1; pointer-events: all; }
+
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .reveal-item.shown { opacity: 1; transform: translateY(0); }
+
+        .eyebrow {
+            font-family: 'A2z', sans-serif;
+            font-size: clamp(0.6rem, 1vw, 0.75rem);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 2.5vh;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            margin-bottom: 4vh;
+        }
+
+        h3 {
+            font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 1vh;
+            letter-spacing: 0.02em;
+        }
+
+        p {
+            font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+            font-weight: 300;
+            line-height: 1.85;
+            max-width: 72ch;
+        }
+
+        .sub {
+            font-size: clamp(1rem, 1.8vw, 1.35rem);
+            font-weight: 300;
+            line-height: 1.7;
+            color: #666666;
+            margin-top: 2.5vh;
+            max-width: 60ch;
+        }
+
+        .rule { width: 4rem; height: 2px; background: var(--accent); margin: 2.5vh 0; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; margin-top: 3vh; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3vw; margin-top: 3vh; }
+
+        .card { border: 1px solid var(--line); border-radius: 12px; padding: 3vh 2.5vw; background: var(--card-bg); }
+        .card p { font-size: clamp(0.78rem, 1.3vw, 0.95rem); color: var(--muted); margin-top: 0.8vh; }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 2.5vh 2.5vw;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(0.72rem, 1.2vw, 0.9rem);
+            line-height: 1.9;
+            color: var(--text);
+            overflow-x: auto;
+            margin-top: 2.5vh;
+        }
+        pre .cmd     { color: var(--accent); font-weight: 600; }
+        pre .comment { color: var(--muted); }
+
+        .list { list-style: none; margin-top: 2.5vh; display: flex; flex-direction: column; gap: 1.6vh; }
+        .list li {
+            font-size: clamp(0.82rem, 1.4vw, 1rem);
+            font-weight: 300;
+            line-height: 1.6;
+            padding-left: 1.8em;
+            position: relative;
+        }
+        .list li::before { content: '—'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+
+        .tag {
+            display: inline-block;
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.3em 0.8em;
+            margin-right: 0.6em;
+            margin-bottom: 0.6em;
+        }
+
+        .stat { font-size: clamp(3rem, 7vw, 6rem); font-weight: 900; color: var(--accent); line-height: 1; letter-spacing: -0.04em; }
+
+        #s1 { justify-content: center; }
+        #s1 .meta { font-size: clamp(0.7rem, 1.1vw, 0.85rem); font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 4vh; }
+        #s1 h1 span { color: var(--accent); display: block; }
+
+        .vline { width: 1px; background: var(--line); align-self: stretch; margin: 0 3vw; }
+        .hl { color: var(--accent); font-weight: 700; }
+
+        .col-layout { display: flex; gap: 6vw; margin-top: 2.5vh; align-items: flex-start; }
+        .col-layout > div { flex: 1; }
+
+        .wide-card { border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; padding: 2vh 2.5vw; background: var(--card-bg); margin-top: 2vh; }
+        .wide-card p { font-size: clamp(0.78rem, 1.3vw, 0.95rem); color: var(--muted); }
+
+        .steps { list-style: none; margin-top: 2vh; display: flex; flex-direction: column; gap: 2.2vh; }
+        .steps li { display: flex; gap: 2.5vw; align-items: flex-start; }
+        .step-num { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 900; color: var(--line); line-height: 1.2; min-width: 2ch; letter-spacing: -0.03em; }
+        .step-body h3 { margin-bottom: 0.4vh; font-size: clamp(0.85rem, 1.4vw, 1rem); }
+        .step-body p  { font-size: clamp(0.75rem, 1.2vw, 0.9rem); color: var(--muted); }
+
+        .terminal { background: var(--code-bg); border: 1px solid var(--line); border-radius: 12px; padding: 2.5vh 2.5vw; margin-top: 2.5vh; }
+        .terminal .prompt { color: var(--accent); font-weight: 700; }
+        .terminal .output { color: var(--muted); }
+        .terminal p { font-family: 'Courier New', monospace; font-size: clamp(0.72rem, 1.2vw, 0.9rem); line-height: 2; max-width: none; color: var(--text); }
+
+        .compare-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; margin-top: 3vh; }
+        .compare-box { border: 1px solid var(--line); border-radius: 12px; background: var(--card-bg); padding: 2.5vh 2.5vw; }
+        .compare-box.bad  { border-top: 3px solid #C07070; }
+        .compare-box.good { border-top: 3px solid #81A6C6; }
+        .compare-label { font-size: clamp(0.65rem, 1vw, 0.78rem); font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5vh; }
+        .compare-box.bad  .compare-label { color: #C07070; }
+        .compare-box.good .compare-label { color: #81A6C6; }
+        .compare-box .prompt-text { font-family: 'Courier New', monospace; font-size: clamp(0.72rem, 1.2vw, 0.88rem); line-height: 1.75; color: var(--text); background: var(--code-bg); border-radius: 8px; padding: 1.5vh 1.5vw; margin-bottom: 1.5vh; }
+        .compare-box .result { font-size: clamp(0.75rem, 1.25vw, 0.92rem); font-weight: 400; line-height: 1.65; }
+        .compare-box.bad  .result { color: #C07070; }
+        .compare-box.good .result { color: #81A6C6; }
+
+        #counter { position: fixed; bottom: 3vh; right: 3.5vw; font-size: clamp(0.6rem, 0.9vw, 0.75rem); font-weight: 500; letter-spacing: 0.12em; color: var(--muted); z-index: 100; }
+        #progress { position: fixed; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.4s ease; z-index: 100; }
+        .hint { position: fixed; bottom: 3vh; left: 50%; transform: translateX(-50%); font-size: clamp(0.58rem, 0.85vw, 0.7rem); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); opacity: 0.5; z-index: 100; pointer-events: none; }
+
+        /* ─── SLIDE 10 layout ─── */
+        #s10 .s10-body {
+            margin-top: 0;
+        }
+
+        #s10 .s10-text { flex: 1; min-width: 0; }
+    </style>
+</head>
+<body>
+<div id="deck">
+
+    <!-- 1 Title -->
+    <section id="s1" class="active">
+        <div class="eyebrow">2026 대마고 신입생 멘토링</div>
+        <h1>AI를 다루는<br><span>개발자가 된다는 것</span></h1>
+        <p class="sub">전공과 무관하게, 지금 당장 알아야 할<br>실전 AI 활용 가이드</p>
+    </section>
+
+    <!-- 2 Why Now -->
+    <section id="s2">
+        <div class="eyebrow">배경</div>
+        <h2>왜 지금 AI를<br>배워야 하는가</h2>
+        <div class="col-layout">
+            <div>
+                <div class="stat">76%</div>
+                <p style="margin-top:1vh;">Stack Overflow 설문 기준, 개발자 중 AI 코딩 도구를<br>이미 사용하고 있는 비율 (2025)</p>
+                <div class="rule" style="margin-top:3vh;"></div>
+                <p style="color:#666666; font-size:clamp(0.78rem,1.3vw,0.95rem);">AI는 당신의 직업을 빼앗지 않는다.<br><span class="hl">AI를 쓰는 개발자</span>가 빼앗는다.</p>
+            </div>
+            <div>
+                <ul class="list" style="gap: 2.5vh;">
+                    <li style="font-size: clamp(1rem, 1.8vw, 1.3rem);"><span class="hl">무제한으로 빨라질 수 있는</span> 코드 작성 속도 + 문서화 자동화</li>
+                    <li style="font-size: clamp(1rem, 1.8vw, 1.3rem);">모르는 기술 스택도 즉시 프로토타이핑<br><span style="font-size: clamp(0.65rem, 1vw, 0.8rem); color: var(--muted); font-weight: 300;">* 프로토타이핑: 완성 전에 핵심 기능만 빠르게 만들어보는 것</span></li>
+                    <li style="font-size: clamp(1rem, 1.8vw, 1.3rem);">채용 시장에서 AI 활용 역량은 이미 기본 스펙</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3 LLM -->
+    <section id="s3">
+        <div class="eyebrow">개념</div>
+        <h2>LLM이 실제로<br>하는 일</h2>
+        <div class="grid-3">
+            <div class="card">
+                <h3>다음 토큰 예측</h3>
+                <p>LLM은 입력된 텍스트를 바탕으로 <span class="hl">가장 그럴듯한 다음 단어</span>를 확률적으로 선택하는 모델이다. "이해"가 아니라 패턴 예측이다.</p>
+            </div>
+            <div class="card">
+                <h3>토큰(Token)</h3>
+                <p>텍스트를 쪼개는 최소 단위. 영어 단어 1개 ≈ 1.3토큰, 한국어는 글자당 2~3토큰. <span class="hl">컨텍스트 윈도우</span>: 한 번에 처리할 수 있는 텍스트의 최대 길이다.</p>
+            </div>
+            <div class="card">
+                <h3>파라미터</h3>
+                <p>모델을 구성하는 가중치의 수. GPT-4는 추정 1조+, Llama 3는 700억. 크다고 무조건 좋은 건 아니고 <span class="hl">용도에 맞는 모델</span>이 중요하다.</p>
+            </div>
+        </div>
+        <div class="wide-card" style="margin-top:3vh;">
+            <p>핵심 요점: LLM은 "정답을 알아서" 출력하는 게 아니다. 학습 데이터 패턴으로 <span class="hl">가장 그럴듯한 텍스트</span>를 생성한다. 그래서 자신 있게 틀린다.</p>
+        </div>
+    </section>
+
+    <!-- 4 Hallucination -->
+    <section id="s4">
+        <div class="eyebrow">주의사항</div>
+        <h2>환각(Hallucination)<br>그리고 믿으면 안 되는 것</h2>
+        <div class="col-layout">
+            <div>
+                <ul class="list">
+                    <li><span class="hl">존재하지 않는 API</span>와 함수명을 확신 있게 제시</li>
+                    <li><span class="hl">오래된 문서</span> 기반 답변 (학습 컷오프 이후 변경사항 모름)</li>
+                    <li>수학·논리 추론에서 <span class="hl">체계적 오류</span> 발생 가능</li>
+                    <li>출처·인용 날조 (있어 보이는 가짜 논문 링크)</li>
+                    <li>코드는 실행 전까지 <span class="hl">동작 보장 없음</span></li>
+                </ul>
+            </div>
+            <div>
+                <div style="border: 1px solid var(--accent); border-radius: 12px; padding: 2vh 2.5vw; background: var(--card-bg); position: relative; margin-top: 2vh;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:var(--accent); font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">대응 원칙</span>
+                    <p style="line-height:2;">① 항상 공식 문서로 교차 검증<br>② 생성된 코드는 반드시 직접 실행·테스트<br>③ AI 출력을 초안으로 취급, 최종 판단은 내가<br>④ 최신 정보가 필요하면 웹 검색 도구나 MCP를 활용</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5 AI 4대장 -->
+    <section id="s5">
+        <div class="eyebrow">AI 모델</div>
+        <h2>알아야 할<br>AI 4대장</h2>
+        <div class="grid-2" style="margin-top:2vh;">
+            <div class="card">
+                <h3>ChatGPT <span style="font-weight:300; color:var(--muted);">— OpenAI</span></h3>
+                <p>가장 널리 알려진 AI. GPT-4o / o3 기준 멀티모달(텍스트·이미지·음성) 지원. 플러그인·GPTs 생태계가 풍부하다.</p>
+            </div>
+            <div class="card">
+                <h3>Claude <span style="font-weight:300; color:var(--muted);">— Anthropic</span></h3>
+                <p>긴 문서 처리와 코드 품질에 강점. 안전성 중심 설계. Claude Code로 터미널에서 직접 코딩 작업 가능.</p>
+            </div>
+            <div class="card">
+                <h3>Gemini <span style="font-weight:300; color:var(--muted);">— Google</span></h3>
+                <p>Google 검색·Docs·YouTube와 통합. Gemini 2.5 Pro는 코딩 벤치마크 최상위권. CLI 도구로 터미널 연동 가능.</p>
+            </div>
+            <div class="card">
+                <h3>DeepSeek <span style="font-weight:300; color:var(--muted);">— DeepSeek AI</span></h3>
+                <p>중국 스타트업이 만든 오픈소스 모델. GPT-4급 성능을 낮은 비용으로 제공. 로컬 실행도 가능해 비용 민감한 개발자에게 인기가 높다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5b Agentic AI Tools -->
+    <section id="s5b">
+        <div class="eyebrow">에이전틱 AI</div>
+        <h2>AI가 직접<br>코드를 짠다</h2>
+        <p style="color:var(--muted); font-size:clamp(0.8rem,1.3vw,0.95rem); margin-bottom:2.5vh;">단순 질답을 넘어, AI가 파일을 읽고·수정하고·실행하며 목표를 달성하는 도구들</p>
+        <div class="grid-2" style="margin-top:0;">
+            <div class="card">
+                <h3>Claude Code</h3>
+                <p>터미널에서 실행. 프로젝트 전체를 이해하고 파일 생성·수정·삭제·명령 실행까지 자율 수행. <span class="hl">지금 이 발표도 Claude Code로 만들었다.</span></p>
+                <div style="margin-top:1.5vh; display:flex; flex-wrap:wrap; gap:0.5vh;">
+                    <span class="tag">Anthropic</span><span class="tag">터미널</span><span class="tag">전체 코드베이스</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Gemini CLI</h3>
+                <p>Google의 오픈소스 터미널 AI. 무료 티어로 시작 가능. 디렉토리 전체를 컨텍스트로 넘기고 코드 생성·수정 지시 가능.</p>
+                <div style="margin-top:1.5vh; display:flex; flex-wrap:wrap; gap:0.5vh;">
+                    <span class="tag">Google</span><span class="tag">오픈소스</span><span class="tag">무료 시작</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Cursor / Windsurf</h3>
+                <p>VS Code 기반 AI IDE. 코드베이스 전체를 이해한 상태로 자동완성·리팩토링·버그 수정을 인라인으로 처리한다.</p>
+                <div style="margin-top:1.5vh; display:flex; flex-wrap:wrap; gap:0.5vh;">
+                    <span class="tag">IDE 통합</span><span class="tag">인라인 편집</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>GitHub Copilot</h3>
+                <p>GitHub·VS Code 공식 통합. 코드 자동완성의 원조. Copilot Workspace로 PR 단위 에이전틱 작업까지 지원한다.</p>
+                <div style="margin-top:1.5vh; display:flex; flex-wrap:wrap; gap:0.5vh;">
+                    <span class="tag">Microsoft</span><span class="tag">GitHub 통합</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6 Prompt Interface -->
+    <section id="s6" data-animated="true">
+        <div class="eyebrow">핵심 스킬</div>
+        <h2>프롬프트는<br>AI와의 인터페이스다</h2>
+        <div class="col-layout" style="margin-top:2vh; align-items:center;">
+            <div>
+                <p>코드는 컴퓨터에게 명령하는 언어다.<br><span class="hl">프롬프트는 AI에게 명령하는 언어다.</span></p>
+                <p style="margin-top:1.5vh; color:var(--muted); font-size:clamp(0.8rem,1.3vw,0.95rem);">같은 AI, 같은 모델이라도 프롬프트를 어떻게 쓰느냐에 따라 결과물의 품질이 완전히 달라진다. 프롬프트는 운이 아니라 <span class="hl">기술이다.</span></p>
+            </div>
+            <div>
+                <div class="reveal-item" style="border-left: 3px solid #C07070; border-radius: 0 12px 12px 0; background:#EDE0DF; padding: 2vh 2.5vw; margin-top: 2vh;">
+                    <p style="color:#C07070; font-weight:500;">프롬프트를 대충 쓰면</p>
+                    <p style="margin-top:0.5vh;">"뭔가 알려줘" → 피상적인 설명, 쓸모없는 예시, 재질문 필요</p>
+                </div>
+                <div class="reveal-item" style="border-left: 3px solid #81A6C6; border-radius: 0 12px 12px 0; background:#DDE8F0; padding: 2vh 2.5vw; margin-top: 1.5vh;">
+                    <p style="color:#81A6C6; font-weight:500;">프롬프트를 잘 쓰면</p>
+                    <p style="margin-top:0.5vh;">"내가 원하는 것을 정확히" → 바로 쓸 수 있는 코드, 문서, 답변</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7 Korean History -->
+    <section id="s7" data-animated="true">
+        <div class="eyebrow">실제 사례 — 한국사 과제</div>
+        <h2>같은 AI, 다른 결과</h2>
+        <p style="font-size:clamp(0.8rem,1.3vw,0.95rem); color:var(--muted); margin-bottom:2vh;">과제: <span class="hl">"조선 후기 사회 변화를 서술하시오"</span></p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2vw;">
+            <!-- BAD -->
+            <div class="reveal-item" style="display:flex; flex-direction:column; gap:1.2vh;">
+                <div style="display:flex; align-items:center; gap:1vw;">
+                    <span style="font-size:clamp(1.8rem,3vw,2.5rem); font-weight:900; color:#C07070; line-height:1;">✗</span>
+                    <span style="font-size:clamp(0.65rem,1vw,0.78rem); font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:#C07070;">프롬프트 없이</span>
+                </div>
+                <div style="background:var(--code-bg); border:1px solid #C07070; border-radius:12px; padding:1.8vh 1.8vw; font-family:'Courier New',monospace; font-size:clamp(0.75rem,1.2vw,0.9rem); color:var(--text); line-height:1.6; position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:#C07070; font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">PROMPT</span>
+                    "조선 후기 사회 변화 알려줘"
+                </div>
+                <div style="background:var(--card-bg); border:1px solid #C07070; border-radius:12px; padding:1.5vh 1.5vw; font-size:clamp(0.75rem,1.2vw,0.9rem); color:var(--muted); line-height:1.7; position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:#C07070; font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">RESULT</span>
+                    신분제·상공업 나열. 흐름 없음.<br>그대로 못 씀 → 손으로 다시 작성<br><strong style="color:#C07070;">낮은 점수</strong>
+                </div>
+            </div>
+            <!-- GOOD -->
+            <div class="reveal-item" style="display:flex; flex-direction:column; gap:1.2vh;">
+                <div style="display:flex; align-items:center; gap:1vw;">
+                    <span style="font-size:clamp(1.8rem,3vw,2.5rem); font-weight:900; color:var(--accent); line-height:1;">✓</span>
+                    <span style="font-size:clamp(0.65rem,1vw,0.78rem); font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent);">프롬프트 설계</span>
+                </div>
+                <div style="background:var(--code-bg); border:1px solid var(--accent); border-radius:12px; padding:1.8vh 1.8vw; font-family:'Courier New',monospace; font-size:clamp(0.72rem,1.1vw,0.85rem); color:var(--text); line-height:1.8; position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:var(--accent); font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">PROMPT</span>
+                    "고교 2학년 한국사 서술형 과제야.<br>① 신분제 동요 ② 상품 경제 발달<br>③ 서민 문화 성장 — 각 항목 사례 1개,<br>500자로 써줘"
+                </div>
+                <div style="background:var(--card-bg); border:1px solid var(--accent); border-radius:12px; padding:1.5vh 1.5vw; font-size:clamp(0.75rem,1.2vw,0.9rem); color:var(--muted); line-height:1.7; position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:var(--accent); font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">RESULT</span>
+                    구조화된 서술, 사례 포함.<br>검토·수정만 하면 바로 제출<br><strong style="color:var(--accent);">만점</strong>
+                </div>
+            </div>
+        </div>
+        <div class="wide-card reveal-item" style="margin-top:2vh;">
+            <p><span class="hl">역할 / 맥락 / 형식 / 분량</span> — 네 가지만 넣어도 결과가 완전히 달라진다.</p>
+        </div>
+    </section>
+
+    <!-- 8 Prompt 6 rules -->
+    <section id="s8" data-animated="true">
+        <div class="eyebrow">프롬프트 작성법</div>
+        <h2>6가지 원칙</h2>
+        <div class="grid-2">
+            <ul class="steps">
+                <li class="reveal-item">
+                    <span class="step-num">01</span>
+                    <div class="step-body">
+                        <h3>역할을 지정하라</h3>
+                        <p>"시니어 백엔드 개발자로서[역할], FastAPI 프로젝트에서 JWT 인증을 추가해야 해[맥락]. 함수 단위로[형식] 핵심 코드만 보여줘[분량]." — 네 요소를 모두 넣으면 바로 쓸 수 있는 답이 나온다.</p>
+                    </div>
+                </li>
+                <li class="reveal-item">
+                    <span class="step-num">02</span>
+                    <div class="step-body">
+                        <h3>원하는 출력 형식을 명시하라</h3>
+                        <p>"JSON 형태로", "함수 단위로", "주석 포함해서", "마크다운 없이 코드만" 처럼 형식을 지정한다.</p>
+                    </div>
+                </li>
+                <li class="reveal-item">
+                    <span class="step-num">03</span>
+                    <div class="step-body">
+                        <h3>예시를 넣으면 정확도 급상승</h3>
+                        <p>Input/Output 예시를 1~3개 제공하는 Few-shot 프롬프팅. 말로 설명하기 어려운 패턴에 효과적이다.</p>
+                    </div>
+                </li>
+            </ul>
+            <ul class="steps">
+                <li class="reveal-item">
+                    <span class="step-num">04</span>
+                    <div class="step-body">
+                        <h3>한 번에 너무 많이 요청하지 마라</h3>
+                        <p>복잡한 작업은 단계를 나눠서 요청한다. "먼저 설계를 보여줘 → 승인 후 구현" 식의 대화형 접근이 유리하다.</p>
+                    </div>
+                </li>
+                <li class="reveal-item">
+                    <span class="step-num">05</span>
+                    <div class="step-body">
+                        <h3>에러 메시지는 통째로 붙여넣어라</h3>
+                        <p>요약하지 말고 스택 트레이스 전체를 포함한다. AI는 맥락을 잘 볼수록 정확한 진단을 낸다.</p>
+                    </div>
+                </li>
+                <li class="reveal-item">
+                    <span class="step-num">06</span>
+                    <div class="step-body">
+                        <h3>마음에 안 들면 즉시 피드백</h3>
+                        <p>"반환값을 Optional로 바꿔줘", "에러 처리 빠진 부분만 추가해줘" 처럼 행동 가능한 피드백으로 반복 개선한다.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 9 Coding Patterns -->
+    <section id="s9">
+        <div class="eyebrow">실전 활용</div>
+        <h2>AI와 함께 코드 쓰는<br>실전 패턴</h2>
+        <div class="grid-2">
+            <div>
+                <div class="wide-card">
+                    <h3>탐색 (Explore)</h3>
+                    <p>"Python에서 CSV 파일을 읽는 가장 일반적인 방법 3가지 보여줘"<br>— 모르는 영역 빠른 조망에 탁월</p>
+                </div>
+                <div class="wide-card">
+                    <h3>구현 (Implement)</h3>
+                    <p>"JWT 인증 미들웨어를 Express.js로 구현해줘. refresh token 포함, TypeScript 기준"<br>— 상세 스펙 제공할수록 품질 향상</p>
+                </div>
+            </div>
+            <div>
+                <div class="wide-card">
+                    <h3>디버깅 (Debug)</h3>
+                    <p>"이 에러가 왜 발생하는지 설명하고 수정해줘: [에러 전문 붙여넣기]"<br>— 에러 맥락과 코드를 함께 제공</p>
+                </div>
+                <div class="wide-card">
+                    <h3>리뷰 (Review)</h3>
+                    <p>"이 코드의 보안 취약점, 성능 이슈, 개선점을 시니어 개발자 시각에서 검토해줘"<br>— 자기 코드 품질 빠른 점검</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10 Mindset + Book Image -->
+    <section id="s10">
+        <div class="eyebrow">마인드셋</div>
+        <h2>AI 시대 개발자의<br>역할이 바뀐다</h2>
+        <div class="s10-body">
+            <div class="s10-text">
+                <div style="display:flex; gap:4vw; align-items:flex-start;">
+                    <div style="flex:1;">
+                        <h3 style="color:var(--muted); margin-bottom:2vh; font-size:clamp(0.8rem,1.3vw,1rem);">AI가 대체하는 것</h3>
+                        <ul class="list">
+                            <li>반복적 보일러플레이트 작성</li>
+                            <li>표준 패턴의 1차 구현</li>
+                            <li>기계적 단위 테스트 생성</li>
+                        </ul>
+                    </div>
+                    <div class="vline"></div>
+                    <div style="flex:1;">
+                        <h3 style="color:var(--accent); margin-bottom:2vh; font-size:clamp(0.8rem,1.3vw,1rem);">여전히 개발자가 해야 하는 것</h3>
+                        <ul class="list">
+                            <li><span class="hl">무엇을 만들지</span> 정의하고 판단하기</li>
+                            <li>시스템 전체 설계와 트레이드오프 결정</li>
+                            <li>AI 출력물의 <span class="hl">품질 검증과 책임</span></li>
+                            <li>비즈니스 맥락과 기술을 연결하는 사고</li>
+                            <li>예외 상황, 보안, 성능 — 도메인 깊이</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="wide-card" style="margin-top:3vh;">
+                    <p>AI는 주니어 개발자를 없애지 않는다. 단, <span class="hl">AI를 쓰는 주니어</span>와 그렇지 않은 주니어의 생산성 차이는 점점 벌어진다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11 Practice Intro -->
+    <section id="s11">
+        <div class="eyebrow">실습</div>
+        <h2>직접 써본다</h2>
+        <div class="rule"></div>
+        <p class="sub" style="color:var(--text);">Google Gemini CLI</p>
+        <p style="margin-top:2vh;">터미널에서 바로 Gemini를 사용하는 공식 오픈소스 CLI 도구.<br>코드베이스를 통째로 이해시키고, 파일을 읽고, 명령을 실행하고, API를 호출한다.</p>
+        <div class="grid-2" style="margin-top:3vh;">
+            <div class="card">
+                <h3>사전 준비</h3>
+                <p>Node.js 18+ 설치 확인<br>Google 계정 (무료 티어 사용 가능)<br>터미널 기본 사용 가능</p>
+            </div>
+            <div class="card">
+                <h3>오늘 실습 목표</h3>
+                <p>설치 및 인증 완료<br>기본 명령어 익히기<br>실제 코드 작성 지시 경험</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12 Install -->
+    <section id="s12">
+        <div class="eyebrow">실습 01 — 설치</div>
+        <h2>Gemini CLI 설치</h2>
+        <pre><span class="comment"># Node.js 버전 확인 (18 이상 필요)</span>
+<span class="cmd">node --version</span>
+
+<span class="comment"># npm으로 전역 설치</span>
+<span class="cmd">npm install -g @google/gemini-cli</span>
+
+<span class="comment"># 설치 확인</span>
+<span class="cmd">gemini --version</span>
+
+<span class="comment"># 또는 npx로 설치 없이 바로 실행</span>
+<span class="cmd">npx @google/gemini-cli</span></pre>
+        <div class="wide-card">
+            <p>설치 후 최초 실행 시 브라우저가 열리며 Google 계정 로그인 및 OAuth 인증이 진행된다. 무료 티어는 분당 요청 제한이 있지만 실습에는 충분하다.</p>
+        </div>
+    </section>
+
+    <!-- 13 Basic Commands -->
+    <section id="s13">
+        <div class="eyebrow">실습 02 — 기본 사용</div>
+        <h2>기본 명령어</h2>
+        <pre><span class="comment"># 첫 실행 시 브라우저가 열리며 Google 계정 자동 인증</span>
+<span class="cmd">gemini</span>
+
+<span class="comment"># 단일 질문 (파이프 활용)</span>
+<span class="cmd">echo "Python에서 리스트를 역순으로 정렬하는 방법 3가지 알려줘" | gemini</span>
+
+<span class="comment"># 파일을 컨텍스트로 전달</span>
+<span class="cmd">gemini -f app.py "이 코드에서 버그를 찾아줘"</span>
+
+<span class="comment"># 현재 디렉토리 전체를 컨텍스트로</span>
+<span class="cmd">gemini "이 프로젝트 구조를 설명하고 README를 작성해줘"</span></pre>
+    </section>
+
+    <!-- 14 Hands-on -->
+    <section id="s14">
+        <div class="eyebrow">실습 03 — 코드 생성</div>
+        <h2>실제로 코드를<br>만들어보자</h2>
+        <div class="col-layout">
+            <div>
+                <h3 style="margin-bottom:1.5vh;">미션 A: 함수 생성</h3>
+                <div class="terminal">
+                    <p><span class="prompt">$</span> gemini</p>
+                    <p><span class="prompt">&gt;</span> Python 함수를 작성해줘:</p>
+                    <p><span class="output">  - 문자열 리스트를 받아서</span></p>
+                    <p><span class="output">  - 길이가 5자 이상인 것만 필터링</span></p>
+                    <p><span class="output">  - 알파벳 역순으로 정렬해서 반환</span></p>
+                    <p><span class="output">  - 타입 힌트와 docstring 포함</span></p>
+                </div>
+            </div>
+            <div>
+                <h3 style="margin-bottom:1.5vh;">미션 B: 버그 수정</h3>
+                <div class="terminal">
+                    <p><span class="prompt">$</span> gemini -f buggy.py</p>
+                    <p><span class="prompt">&gt;</span> 이 코드를 실행하면</p>
+                    <p><span class="output">  IndexError가 발생한다.</span></p>
+                    <p><span class="output">  원인을 설명하고</span></p>
+                    <p><span class="output">  수정된 코드를 제공해줘.</span></p>
+                </div>
+                <div class="wide-card" style="margin-top:1.5vh;">
+                    <p>마음에 안 들면 "더 Pythonic하게", "예외 처리 추가" 등으로 즉시 후속 요청을 넣어본다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 15 Wrap-up -->
+    <section id="s15">
+        <div class="eyebrow">정리</div>
+        <h2>오늘 가져갈 것</h2>
+        <div class="grid-3" style="margin-top:2.5vh;">
+            <div class="card">
+                <h3>개념</h3>
+                <p>LLM은 패턴 예측 엔진이다. 환각이 존재하며, 교차 검증은 항상 필수다.</p>
+            </div>
+            <div class="card">
+                <h3>프롬프트</h3>
+                <p>역할·맥락·형식·분량을 넣으면 결과가 달라진다. 프롬프트는 기술이다.</p>
+            </div>
+            <div class="card">
+                <h3>도구</h3>
+                <p>Gemini CLI 하나만 익혀도 충분한 시작점이다. 익숙해지면 Copilot, Claude Code로 확장한다.</p>
+            </div>
+        </div>
+        <div class="rule" style="margin-top:4vh;"></div>
+        <p style="color:var(--muted); font-size:clamp(0.78rem,1.3vw,0.95rem);">
+            다음 단계: <span class="hl">GitHub Copilot</span> IDE 연동 / <span class="hl">OpenAI API</span> 직접 호출 / <span class="hl">RAG</span> 패턴으로 나만의 AI 도구 만들기
+        </p>
+        <p style="margin-top:3vh; font-size:clamp(1rem,1.8vw,1.3rem); font-weight:700; letter-spacing:-0.01em;">질문 있으면 지금 바로.</p>
+    </section>
+
+    <!-- 16 소마고생 현실 -->
+    <section id="s16">
+        <div class="eyebrow">현실 직시</div>
+        <h2>소마고생으로<br>살아남기</h2>
+        <div class="col-layout" style="margin-top:2vh; align-items:flex-start;">
+            <div style="flex:1.2;">
+                <div style="border:1px solid #C07070; border-radius:12px; padding:2vh 2.5vw; background:var(--card-bg); position:relative; margin-bottom:2vh;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:#C07070; font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">문제</span>
+                    <p style="font-size:clamp(0.82rem,1.4vw,1rem); line-height:1.85;">LLM으로 인해 <span style="color:#C07070; font-weight:700;">사이드 프로젝트 수준이 평준화</span>됐다.<br>비전공자도 2일이면 게시판·채팅·쇼핑몰을 뚝딱 만든다.<br><span style="color:var(--muted); font-size:0.9em;">"실무에 바로 투입 가능한 인재" 타이틀은 이제 사라졌다.</span></p>
+                </div>
+                <div style="border:1px solid #C07070; border-radius:12px; padding:2vh 2.5vw; background:var(--card-bg); position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:#C07070; font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">함정</span>
+                    <p style="font-size:clamp(0.82rem,1.4vw,1rem); line-height:1.85;">JPA, MSA, Reactive… <span style="color:#C07070; font-weight:700;">프레임워크 사용법</span>에 3년을 허비하지 말 것.<br><span style="color:var(--muted); font-size:0.9em;">유행하는 도구보다 어디서든 쓰이는 CS 원리가 더 오래간다.</span></p>
+                </div>
+            </div>
+            <div style="flex:1;">
+                <div style="border:1px solid var(--accent); border-radius:12px; padding:2vh 2.5vw; background:var(--card-bg); position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:var(--accent); font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">변하지 않는 본질</span>
+                    <ul class="list" style="margin-top:0;">
+                        <li><span class="hl">빠른 학습 능력</span> — 새 기술을 빠르게 흡수하는 힘</li>
+                        <li><span class="hl">깊이 있는 CS 지식</span> — AI 코드의 성능·환각을 잡아내는 눈</li>
+                        <li><span class="hl">AI 활용 능력</span> — 도구를 다루는 것이 이제 기본 스펙</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 17 CS가 중요한 이유 -->
+    <section id="s17">
+        <div class="eyebrow">핵심 전략 1</div>
+        <h2>CS 지식이<br>경쟁력이 되는 이유</h2>
+        <div class="col-layout" style="margin-top:2vh; align-items:flex-start;">
+            <div style="flex:1;">
+                <div style="border:1px solid var(--accent); border-radius:12px; padding:2vh 2.5vw; background:var(--card-bg); position:relative; margin-bottom:2vh;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:var(--accent); font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">예시</span>
+                    <p style="font-size:clamp(0.82rem,1.4vw,1rem); line-height:1.85;"><span class="hl">멀티플렉싱</span>이라는 개념을 알고 있다면,<br>Java Virtual Threads가 왜 ForkJoinPool을 쓰는지<br>문서를 훑어보는 것만으로 바로 이해된다.</p>
+                </div>
+                <div style="border:1px solid var(--accent); border-radius:12px; padding:2vh 2.5vw; background:var(--card-bg); position:relative;">
+                    <span style="position:absolute; top:-0.7em; left:1.2em; background:var(--bg); padding:0 0.5em; font-size:clamp(0.6rem,0.9vw,0.72rem); color:var(--accent); font-weight:600; letter-spacing:0.1em; font-family:'A2z',sans-serif;">핵심</span>
+                    <p style="font-size:clamp(0.82rem,1.4vw,1rem); line-height:1.85;">CS는 <span class="hl">도구가 바뀌어도 변하지 않는 원리</span>다.<br>JPA, MSA 같은 프레임워크는 유행을 타지만,<br>OS·네트워크·자료구조는 어디서든 쓰인다.</p>
+                </div>
+            </div>
+            <div style="flex:1;">
+                <p style="font-size:clamp(0.85rem,1.4vw,1rem); color:var(--muted); margin-bottom:2vh;">CS 지식이 있으면:</p>
+                <ul class="list">
+                    <li>AI가 짠 코드의 <span class="hl">성능 이슈와 환각</span>을 잡아낼 수 있다</li>
+                    <li>새 기술 스택을 <span class="hl">AI와 함께 빠르게</span> 흡수할 수 있다</li>
+                    <li>트러블슈팅 경험을 <span class="hl">링크드인에 공유</span>하면 차별화된 포트폴리오가 된다</li>
+                    <li>프레임워크 선택의 <span class="hl">트레이드오프를 설명</span>할 수 있다</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 18 포트폴리오 전략 -->
+    <section id="s18">
+        <div class="eyebrow">핵심 전략 2</div>
+        <h2>포트폴리오를<br>채우는 법</h2>
+        <div class="grid-2" style="margin-top:2vh;">
+            <div class="card">
+                <h3>① CS 기반 트러블슈팅</h3>
+                <p>JPA 숨겨진 기능 발견?은 재미없다. OS·네트워크·DB 이론으로 <span class="hl">근본 원인을 분석</span>하고 링크드인에 공유하라. 너 빼고 다 아는 얘기는 NO.</p>
+            </div>
+            <div class="card">
+                <h3>② 협업 경험 증명</h3>
+                <p>프로젝트 완성보다 <span class="hl">협업 과정</span>이 귀하다. API 명세를 프론트엔드와 함께 설계하고, 소통·조율·피드백 경험을 남겨라. "내가 문화를 바꿨다"는 신입에겐 마이너스.</p>
+            </div>
+            <div class="card">
+                <h3>③ AI 활용 능력 증명</h3>
+                <p>에이전트 만들기, AI 도구로 실제 문제 해결하기 — <span class="hl">AI를 쓰는 방법</span>을 아는 것 자체가 포트폴리오가 된다.</p>
+            </div>
+            <div class="card">
+                <h3>④ 오버 엔지니어링 금지</h3>
+                <p>Spring Boot + Kotlin + JPA + MySQL을 당연하게 쓰지 말 것. <span class="hl">왜 이 기술을 선택했는지</span>, 트레이드오프를 설명할 수 있어야 한다. 토끼굴에 빠지지 말 것.</p>
+            </div>
+        </div>
+        <div class="wide-card" style="margin-top:2vh;">
+            <p><span class="hl">CS 공부 1순위</span> → 그 다음 사이드 프로젝트. 순서가 중요하다. 화이팅!</p>
+        </div>
+    </section>
+
+</div>
+
+<div id="counter">1 / 19</div>
+<div id="progress"></div>
+<div class="hint" id="hint"></div>
+
+<script>
+    const slides = document.querySelectorAll('section');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const hint = document.getElementById('hint');
+    const total = slides.length;
+    let current = 0;
+    const revealState = Array.from(slides).map(() => 0);
+
+    function getItems(idx) {
+        return Array.from(slides[idx].querySelectorAll('.reveal-item'));
+    }
+
+    function updateHint() {
+        const items = getItems(current);
+        hint.textContent = (items.length > 0 && revealState[current] < items.length) ? '→ 계속' : '';
+    }
+
+    function goTo(idx) {
+        if (idx < 0 || idx >= total) return;
+        slides[current].classList.remove('active');
+        current = idx;
+        slides[current].classList.add('active');
+        const items = getItems(current);
+        items.forEach((el, i) => {
+            if (i < revealState[current]) el.classList.add('shown');
+            else el.classList.remove('shown');
+        });
+        counter.textContent = (current + 1) + ' / ' + total;
+        progress.style.width = ((current + 1) / total * 100) + '%';
+        updateHint();
+    }
+
+    function forward() {
+        const items = getItems(current);
+        if (items.length > 0 && revealState[current] < items.length) {
+            items[revealState[current]].classList.add('shown');
+            revealState[current]++;
+            updateHint();
+        } else {
+            goTo(current + 1);
+        }
+    }
+
+    function backward() {
+        const items = getItems(current);
+        if (items.length > 0 && revealState[current] > 0) {
+            revealState[current]--;
+            items[revealState[current]].classList.remove('shown');
+            updateHint();
+        } else {
+            goTo(current - 1);
+        }
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') forward();
+        if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')  backward();
+    });
+
+    goTo(0);
+</script>
+</body>
+</html>
