@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { TopBar } from '../../components/TopBar';
 import { getPresentationById } from '../../utils/presentation';
 
@@ -8,19 +8,7 @@ interface PresentationPageProps {
 
 export function PresentationPage({ presentationId }: PresentationPageProps) {
   const viewerFrameWrapRef = useRef<HTMLElement | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const presentation = getPresentationById(presentationId);
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === viewerFrameWrapRef.current);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
 
   const handleToggleFullscreen = async () => {
     if (!viewerFrameWrapRef.current) {
@@ -28,8 +16,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
     }
 
     try {
-      if (document.fullscreenElement === viewerFrameWrapRef.current) {
-        await document.exitFullscreen();
+      if (document.fullscreenElement) {
         return;
       }
 
@@ -58,6 +45,15 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
         subtitle={presentation.description}
         action={
           <div className="viewer-actions">
+            <button
+              className="button button--icon"
+              type="button"
+              onClick={handleToggleFullscreen}
+              aria-label="Fullscreen"
+              title="Fullscreen"
+            >
+              <span aria-hidden="true">⤢</span>
+            </button>
             <a className="button button--ghost" href="/">
               Back To Dashboard
             </a>
@@ -65,18 +61,6 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
         }
       />
       <section className="viewer-frame-wrap" ref={viewerFrameWrapRef}>
-        <div className="viewer-frame-hotspot" aria-hidden="true" />
-        <div className="viewer-frame-controls">
-          <button
-            className="button button--icon"
-            type="button"
-            onClick={handleToggleFullscreen}
-            aria-label={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-          >
-            <span aria-hidden="true">{isFullscreen ? '⤡' : '⤢'}</span>
-          </button>
-        </div>
         <iframe
           className="viewer-frame"
           src={presentation.path}
