@@ -479,8 +479,8 @@ a {
 
 .annotation-toolbar--floating {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  left: 10px;
+  bottom: 10px;
   z-index: 5;
   max-width: calc(100% - 24px);
   border: 1px solid rgba(95, 77, 29, 0.24);
@@ -657,9 +657,8 @@ a {
   }
 
   .annotation-toolbar--floating {
-    top: 8px;
-    right: 8px;
-    left: auto;
+    left: 8px;
+    bottom: 8px;
     max-width: calc(100% - 16px);
     padding: 4px;
   }
