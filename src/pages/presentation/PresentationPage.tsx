@@ -82,6 +82,7 @@ function erasePointFromStroke(stroke: AnnotationStroke, erasePoint: AnnotationPo
 
 export function PresentationPage({ presentationId }: PresentationPageProps) {
   const viewerFrameWrapRef = useRef<HTMLElement | null>(null);
+  const viewerFrameRef = useRef<HTMLIFrameElement | null>(null);
   const annotationCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const drawMenuRef = useRef<HTMLDivElement | null>(null);
   const eraseMenuRef = useRef<HTMLDivElement | null>(null);
@@ -366,6 +367,22 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
     setIsEraseMenuOpen(false);
   };
 
+  const activateManipulationMode = () => {
+    setTool('none');
+    setIsDrawMenuOpen(false);
+    setIsEraseMenuOpen(false);
+
+    requestAnimationFrame(() => {
+      viewerFrameRef.current?.focus();
+
+      try {
+        viewerFrameRef.current?.contentWindow?.focus();
+      } catch {
+        // Browser focus policies may block forwarding focus into the frame.
+      }
+    });
+  };
+
   if (!presentation) {
     return (
       <main className="app-shell">
@@ -402,11 +419,13 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
       />
       <section className="viewer-frame-wrap" ref={viewerFrameWrapRef}>
         <iframe
+          ref={viewerFrameRef}
           className="viewer-frame"
           src={presentation.path}
           title={presentation.title}
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-popups"
+          tabIndex={-1}
         />
         <div
           className={`annotation-toolbar annotation-toolbar--floating annotation-toolbar--mode-${tool}`}
@@ -417,11 +436,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
             <button
               className={`button button--ghost button--tool ${tool === 'none' ? 'is-active' : ''}`}
               type="button"
-              onClick={() => {
-                setTool('none');
-                setIsDrawMenuOpen(false);
-                setIsEraseMenuOpen(false);
-              }}
+              onClick={activateManipulationMode}
               aria-pressed={tool === 'none'}
               title={ANNOTATION_TOOL_LABELS.none}
               aria-label={ANNOTATION_TOOL_LABELS.none}
