@@ -6,7 +6,7 @@ interface PresentationPageProps {
   presentationId: string;
 }
 
-type AnnotationTool = 'none' | 'pen' | 'highlight' | 'pointer';
+type AnnotationTool = 'none' | 'pen' | 'highlight' | 'pointer' | 'erase';
 
 interface AnnotationPoint {
   x: number;
@@ -22,18 +22,62 @@ const ANNOTATION_TOOL_LABELS: Record<AnnotationTool, string> = {
   none: '조작',
   pen: '펜',
   highlight: '하이라이트',
-  pointer: '포인터'
+  pointer: '포인터',
+  erase: '부분 지우기'
 };
 
 const ANNOTATION_TOOL_ICONS: Record<AnnotationTool, string> = {
   none: '✋',
   pen: '✎',
   highlight: '▇',
-  pointer: '•'
+  pointer: '•',
+  erase: '⌫'
 };
+
+const PARTIAL_ERASE_RADIUS = 0.02;
+const MIN_STROKE_POINTS = 2;
 
 function clampPointValue(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function getDistanceSquared(a: AnnotationPoint, b: AnnotationPoint) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  return dx * dx + dy * dy;
+}
+
+function erasePointFromStroke(stroke: AnnotationStroke, erasePoint: AnnotationPoint): AnnotationStroke[] {
+  const nextSegments: AnnotationStroke[] = [];
+  let currentSegment: AnnotationPoint[] = [];
+  const radiusSquared = PARTIAL_ERASE_RADIUS * PARTIAL_ERASE_RADIUS;
+
+  for (const point of stroke.points) {
+    const shouldErasePoint = getDistanceSquared(point, erasePoint) <= radiusSquared;
+
+    if (shouldErasePoint) {
+      if (currentSegment.length >= MIN_STROKE_POINTS) {
+        nextSegments.push({
+          tool: stroke.tool,
+          points: currentSegment
+        });
+      }
+
+      currentSegment = [];
+      continue;
+    }
+
+    currentSegment.push(point);
+  }
+
+  if (currentSegment.length >= MIN_STROKE_POINTS) {
+    nextSegments.push({
+      tool: stroke.tool,
+      points: currentSegment
+    });
+  }
+
+  return nextSegments;
 }
 
 export function PresentationPage({ presentationId }: PresentationPageProps) {
@@ -199,6 +243,15 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
       return;
     }
 
+    if (tool === 'erase') {
+      event.currentTarget.setPointerCapture(event.pointerId);
+      isDrawingRef.current = true;
+      setStrokes((previousStrokes) =>
+        previousStrokes.flatMap((stroke) => erasePointFromStroke(stroke, point))
+      );
+      return;
+    }
+
     event.currentTarget.setPointerCapture(event.pointerId);
     isDrawingRef.current = true;
     setStrokes((previousStrokes) => [
@@ -222,6 +275,17 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
 
     if (tool === 'pointer') {
       setPointerPoint(point);
+      return;
+    }
+
+    if (tool === 'erase') {
+      if (!isDrawingRef.current) {
+        return;
+      }
+
+      setStrokes((previousStrokes) =>
+        previousStrokes.flatMap((stroke) => erasePointFromStroke(stroke, point))
+      );
       return;
     }
 
@@ -266,6 +330,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
   const handleClearAnnotations = () => {
     setStrokes([]);
     setPointerPoint(null);
+    setTool('none');
   };
 
   if (!presentation) {
@@ -332,15 +397,27 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
               </button>
             ))}
             <button
-              className="button button--ghost button--tool button--tool--clear"
+              className={`button button--ghost button--tool button--tool--clear ${tool === 'erase' ? 'is-active' : ''}`}
+              type="button"
+              onClick={() => setTool('erase')}
+              aria-pressed={tool === 'erase'}
+              title={ANNOTATION_TOOL_LABELS.erase}
+              aria-label={ANNOTATION_TOOL_LABELS.erase}
+            >
+              <span className="button--tool__icon" aria-hidden="true">
+                {ANNOTATION_TOOL_ICONS.erase}
+              </span>
+            </button>
+            <button
+              className="button button--ghost button--tool button--tool--clear-all"
               type="button"
               onClick={handleClearAnnotations}
               disabled={strokes.length === 0 && !pointerPoint}
-              title="주석 지우기"
-              aria-label="주석 지우기"
+              title="모두 지우기"
+              aria-label="모두 지우기"
             >
               <span className="button--tool__icon" aria-hidden="true">
-                ⌫
+                ✕
               </span>
             </button>
           </div>

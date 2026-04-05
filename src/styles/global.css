@@ -555,6 +555,17 @@ a {
   color: #7d3a2d;
 }
 
+.button--tool--clear.is-active {
+  background: #a14530;
+  border-color: #8c3825;
+}
+
+.button--tool--clear-all {
+  border-style: solid;
+  border-color: rgba(128, 53, 43, 0.46);
+  color: #6f1f12;
+}
+
 .button--tool:disabled {
   opacity: 0.56;
   cursor: not-allowed;
@@ -610,6 +621,10 @@ a {
 .viewer-annotation-canvas--pen,
 .viewer-annotation-canvas--highlight {
   cursor: crosshair;
+}
+
+.viewer-annotation-canvas--erase {
+  cursor: cell;
 }
 
 .viewer-annotation-canvas--pointer {
