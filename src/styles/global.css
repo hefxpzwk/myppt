@@ -492,6 +492,7 @@ a {
 }
 
 .button--tool {
+  position: relative;
   width: 30px;
   height: 30px;
   min-height: 30px;
@@ -504,6 +505,31 @@ a {
   color: #544526;
   background: rgba(255, 255, 255, 0.84);
   gap: 0;
+}
+
+.button--tool::after {
+  content: attr(aria-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translate(-50%, 4px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  background: rgba(24, 22, 16, 0.92);
+  border-radius: 8px;
+  padding: 4px 7px;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.button--tool:hover::after,
+.button--tool:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 .button--tool__icon {
