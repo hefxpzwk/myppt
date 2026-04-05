@@ -617,7 +617,7 @@ a {
   border: 2px solid #d6c5a0;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  height: calc(100vh - 180px);
+  height: calc(100dvh - 180px);
   min-height: 420px;
   box-shadow: var(--shadow-soft);
   background: #ffffff;
@@ -706,6 +706,10 @@ a {
     padding: 14px 10px 36px;
   }
 
+  .viewer-shell {
+    min-height: 100dvh;
+  }
+
   .dashboard-canvas {
     border-radius: 16px;
     padding: 14px;
@@ -746,8 +750,22 @@ a {
     justify-content: flex-end;
   }
 
+  .button--tool {
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .button--tool__icon {
+    font-size: 1rem;
+  }
+
+  .annotation-tool-menu {
+    min-width: 120px;
+  }
+
   .viewer-frame-wrap {
     min-height: 340px;
-    height: calc(100vh - 220px);
+    height: calc(100dvh - 200px);
   }
 }
