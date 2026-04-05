@@ -21,4 +21,14 @@ export const presentations: PresentationMeta[] = [
     author: 'Team',
     featured: true,
   },
+  {
+    id: 'ai-mentoring',
+    title: 'AI Mentoring',
+    path: '/slides/ai-mentoring (1).html',
+    updatedAt: '2026-04-05',
+    description: 'AI 멘토링 발표자료',
+    tags: ['ai', 'mentoring'],
+    author: 'Team',
+    featured: false,
+  },
 ];
