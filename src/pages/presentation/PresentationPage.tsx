@@ -83,11 +83,15 @@ function erasePointFromStroke(stroke: AnnotationStroke, erasePoint: AnnotationPo
 export function PresentationPage({ presentationId }: PresentationPageProps) {
   const viewerFrameWrapRef = useRef<HTMLElement | null>(null);
   const annotationCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const drawMenuRef = useRef<HTMLDivElement | null>(null);
+  const eraseMenuRef = useRef<HTMLDivElement | null>(null);
   const isDrawingRef = useRef(false);
   const strokesRef = useRef<AnnotationStroke[]>([]);
   const [tool, setTool] = useState<AnnotationTool>('none');
   const [strokes, setStrokes] = useState<AnnotationStroke[]>([]);
   const [pointerPoint, setPointerPoint] = useState<AnnotationPoint | null>(null);
+  const [isDrawMenuOpen, setIsDrawMenuOpen] = useState(false);
+  const [isEraseMenuOpen, setIsEraseMenuOpen] = useState(false);
   const presentation = getPresentationById(presentationId);
 
   const redrawAnnotationCanvas = useCallback(() => {
@@ -192,6 +196,33 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
       setPointerPoint(null);
     }
   }, [tool]);
+
+  useEffect(() => {
+    if (!isEraseMenuOpen && !isDrawMenuOpen) {
+      return;
+    }
+
+    const handleWindowPointerDown = (event: PointerEvent) => {
+      const eventTarget = event.target;
+
+      if (!(eventTarget instanceof Node)) {
+        return;
+      }
+
+      if (eraseMenuRef.current?.contains(eventTarget) || drawMenuRef.current?.contains(eventTarget)) {
+        return;
+      }
+
+      setIsEraseMenuOpen(false);
+      setIsDrawMenuOpen(false);
+    };
+
+    window.addEventListener('pointerdown', handleWindowPointerDown);
+
+    return () => {
+      window.removeEventListener('pointerdown', handleWindowPointerDown);
+    };
+  }, [isDrawMenuOpen, isEraseMenuOpen]);
 
   const handleToggleFullscreen = async () => {
     if (!viewerFrameWrapRef.current) {
@@ -331,6 +362,8 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
     setStrokes([]);
     setPointerPoint(null);
     setTool('none');
+    setIsDrawMenuOpen(false);
+    setIsEraseMenuOpen(false);
   };
 
   if (!presentation) {
@@ -381,45 +414,128 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
           aria-label="Annotation tools"
         >
           <div className="annotation-toolbar__group">
-            {(['none', 'pen', 'highlight', 'pointer'] as AnnotationTool[]).map((nextTool) => (
+            <button
+              className={`button button--ghost button--tool ${tool === 'none' ? 'is-active' : ''}`}
+              type="button"
+              onClick={() => {
+                setTool('none');
+                setIsDrawMenuOpen(false);
+                setIsEraseMenuOpen(false);
+              }}
+              aria-pressed={tool === 'none'}
+              title={ANNOTATION_TOOL_LABELS.none}
+              aria-label={ANNOTATION_TOOL_LABELS.none}
+            >
+              <span className="button--tool__icon" aria-hidden="true">
+                {ANNOTATION_TOOL_ICONS.none}
+              </span>
+            </button>
+            <div className="annotation-toolbar__menu-wrap" ref={drawMenuRef}>
               <button
-                key={nextTool}
-                className={`button button--ghost button--tool ${tool === nextTool ? 'is-active' : ''}`}
+                className={`button button--ghost button--tool ${
+                  tool === 'pen' || tool === 'highlight' || isDrawMenuOpen ? 'is-active' : ''
+                }`}
                 type="button"
-                onClick={() => setTool(nextTool)}
-                aria-pressed={tool === nextTool}
-                title={ANNOTATION_TOOL_LABELS[nextTool]}
-                aria-label={ANNOTATION_TOOL_LABELS[nextTool]}
+                onClick={() => {
+                  setIsDrawMenuOpen((previousIsOpen) => !previousIsOpen);
+                  setIsEraseMenuOpen(false);
+                }}
+                aria-haspopup="menu"
+                aria-expanded={isDrawMenuOpen}
+                title="펜 옵션"
+                aria-label="펜 옵션"
               >
                 <span className="button--tool__icon" aria-hidden="true">
-                  {ANNOTATION_TOOL_ICONS[nextTool]}
+                  {tool === 'highlight' ? ANNOTATION_TOOL_ICONS.highlight : ANNOTATION_TOOL_ICONS.pen}
                 </span>
               </button>
-            ))}
+              {isDrawMenuOpen ? (
+                <div className="annotation-tool-menu" role="menu" aria-label="펜 메뉴">
+                  <button
+                    className={`annotation-tool-menu__item ${tool === 'pen' ? 'is-active' : ''}`}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setTool('pen');
+                      setIsDrawMenuOpen(false);
+                    }}
+                  >
+                    펜
+                  </button>
+                  <button
+                    className={`annotation-tool-menu__item ${tool === 'highlight' ? 'is-active' : ''}`}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setTool('highlight');
+                      setIsDrawMenuOpen(false);
+                    }}
+                  >
+                    하이라이트
+                  </button>
+                </div>
+              ) : null}
+            </div>
             <button
-              className={`button button--ghost button--tool button--tool--clear ${tool === 'erase' ? 'is-active' : ''}`}
+              className={`button button--ghost button--tool ${tool === 'pointer' ? 'is-active' : ''}`}
               type="button"
-              onClick={() => setTool('erase')}
-              aria-pressed={tool === 'erase'}
-              title={ANNOTATION_TOOL_LABELS.erase}
-              aria-label={ANNOTATION_TOOL_LABELS.erase}
+              onClick={() => {
+                setTool('pointer');
+                setIsDrawMenuOpen(false);
+                setIsEraseMenuOpen(false);
+              }}
+              aria-pressed={tool === 'pointer'}
+              title={ANNOTATION_TOOL_LABELS.pointer}
+              aria-label={ANNOTATION_TOOL_LABELS.pointer}
             >
               <span className="button--tool__icon" aria-hidden="true">
-                {ANNOTATION_TOOL_ICONS.erase}
+                {ANNOTATION_TOOL_ICONS.pointer}
               </span>
             </button>
-            <button
-              className="button button--ghost button--tool button--tool--clear-all"
-              type="button"
-              onClick={handleClearAnnotations}
-              disabled={strokes.length === 0 && !pointerPoint}
-              title="모두 지우기"
-              aria-label="모두 지우기"
-            >
-              <span className="button--tool__icon" aria-hidden="true">
-                ✕
-              </span>
-            </button>
+            <div className="annotation-toolbar__menu-wrap" ref={eraseMenuRef}>
+              <button
+                className={`button button--ghost button--tool button--tool--clear ${
+                  tool === 'erase' || isEraseMenuOpen ? 'is-active' : ''
+                }`}
+                type="button"
+                onClick={() => {
+                  setIsEraseMenuOpen((previousIsOpen) => !previousIsOpen);
+                  setIsDrawMenuOpen(false);
+                }}
+                aria-haspopup="menu"
+                aria-expanded={isEraseMenuOpen}
+                title="지우기 옵션"
+                aria-label="지우기 옵션"
+              >
+                <span className="button--tool__icon" aria-hidden="true">
+                  {ANNOTATION_TOOL_ICONS.erase}
+                </span>
+              </button>
+              {isEraseMenuOpen ? (
+                <div className="annotation-tool-menu" role="menu" aria-label="지우기 메뉴">
+                  <button
+                    className={`annotation-tool-menu__item ${tool === 'erase' ? 'is-active' : ''}`}
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setTool('erase');
+                      setIsEraseMenuOpen(false);
+                    }}
+                  >
+                    부분 지우기
+                  </button>
+                  <button
+                    className="annotation-tool-menu__item"
+                    type="button"
+                    role="menuitem"
+                    onClick={handleClearAnnotations}
+                    disabled={strokes.length === 0 && !pointerPoint}
+                  >
+                    모두 지우기
+                  </button>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
         <div className={`viewer-annotation-layer ${tool === 'none' ? 'is-passive' : ''}`}>

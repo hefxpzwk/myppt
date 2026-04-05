@@ -477,6 +477,10 @@ a {
   justify-content: flex-end;
 }
 
+.annotation-toolbar__menu-wrap {
+  position: relative;
+}
+
 .annotation-toolbar--floating {
   position: absolute;
   left: 10px;
@@ -560,10 +564,44 @@ a {
   border-color: #8c3825;
 }
 
-.button--tool--clear-all {
-  border-style: solid;
-  border-color: rgba(128, 53, 43, 0.46);
-  color: #6f1f12;
+.annotation-tool-menu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  min-width: 110px;
+  display: grid;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(91, 73, 27, 0.3);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 18px rgba(24, 18, 6, 0.18);
+}
+
+.annotation-tool-menu__item {
+  border: 1px solid rgba(110, 89, 36, 0.24);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4d3c17;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-align: left;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.annotation-tool-menu__item:hover {
+  background: #f8f2e1;
+}
+
+.annotation-tool-menu__item.is-active {
+  background: #f1e2b6;
+  border-color: #a8862d;
+}
+
+.annotation-tool-menu__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .button--tool:disabled {
