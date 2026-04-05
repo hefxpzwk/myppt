@@ -594,3 +594,20 @@ a {
     pointer-events: auto;
   }
 }
+
+.viewer-frame-wrap:fullscreen .viewer-frame-hotspot {
+  pointer-events: auto;
+}
+
+.viewer-frame-wrap:fullscreen:hover .viewer-frame-controls,
+.viewer-frame-wrap:fullscreen:focus-within .viewer-frame-controls {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.viewer-frame-wrap:fullscreen .viewer-frame-hotspot:hover + .viewer-frame-controls,
+.viewer-frame-wrap:fullscreen .viewer-frame-controls:hover,
+.viewer-frame-wrap:fullscreen .viewer-frame-controls:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
