@@ -25,6 +25,13 @@ const ANNOTATION_TOOL_LABELS: Record<AnnotationTool, string> = {
   pointer: '포인터'
 };
 
+const ANNOTATION_TOOL_ICONS: Record<AnnotationTool, string> = {
+  none: '✋',
+  pen: '✎',
+  highlight: '▇',
+  pointer: '•'
+};
+
 function clampPointValue(value: number) {
   return Math.min(1, Math.max(0, value));
 }
@@ -303,25 +310,40 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-popups"
         />
-        <div className="annotation-toolbar annotation-toolbar--floating" role="toolbar" aria-label="Annotation tools">
-          {(['none', 'pen', 'highlight', 'pointer'] as AnnotationTool[]).map((nextTool) => (
+        <div
+          className={`annotation-toolbar annotation-toolbar--floating annotation-toolbar--mode-${tool}`}
+          role="toolbar"
+          aria-label="Annotation tools"
+        >
+          <div className="annotation-toolbar__group">
+            {(['none', 'pen', 'highlight', 'pointer'] as AnnotationTool[]).map((nextTool) => (
+              <button
+                key={nextTool}
+                className={`button button--ghost button--tool ${tool === nextTool ? 'is-active' : ''}`}
+                type="button"
+                onClick={() => setTool(nextTool)}
+                aria-pressed={tool === nextTool}
+                title={ANNOTATION_TOOL_LABELS[nextTool]}
+                aria-label={ANNOTATION_TOOL_LABELS[nextTool]}
+              >
+                <span className="button--tool__icon" aria-hidden="true">
+                  {ANNOTATION_TOOL_ICONS[nextTool]}
+                </span>
+              </button>
+            ))}
             <button
-              key={nextTool}
-              className={`button button--ghost button--tool ${tool === nextTool ? 'is-active' : ''}`}
+              className="button button--ghost button--tool button--tool--clear"
               type="button"
-              onClick={() => setTool(nextTool)}
+              onClick={handleClearAnnotations}
+              disabled={strokes.length === 0 && !pointerPoint}
+              title="주석 지우기"
+              aria-label="주석 지우기"
             >
-              {ANNOTATION_TOOL_LABELS[nextTool]}
+              <span className="button--tool__icon" aria-hidden="true">
+                ⌫
+              </span>
             </button>
-          ))}
-          <button
-            className="button button--ghost button--tool"
-            type="button"
-            onClick={handleClearAnnotations}
-            disabled={strokes.length === 0 && !pointerPoint}
-          >
-            지우기
-          </button>
+          </div>
         </div>
         <div className={`viewer-annotation-layer ${tool === 'none' ? 'is-passive' : ''}`}>
           <canvas

@@ -467,28 +467,66 @@ a {
 .annotation-toolbar {
   display: flex;
   gap: 6px;
+  align-items: flex-end;
+}
+
+.annotation-toolbar__group {
+  display: flex;
+  gap: 4px;
   flex-wrap: wrap;
   justify-content: flex-end;
 }
 
 .annotation-toolbar--floating {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 10px;
+  right: 10px;
   z-index: 5;
   max-width: calc(100% - 24px);
+  border: 1px solid rgba(95, 77, 29, 0.24);
+  border-radius: 999px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.64);
+  box-shadow: 0 6px 16px rgba(36, 25, 0, 0.12);
+  backdrop-filter: blur(2px);
 }
 
 .button--tool {
-  min-height: 38px;
-  padding: 8px 10px;
-  font-size: 0.78rem;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  padding: 0;
+  border-width: 1px;
+  border-color: rgba(110, 89, 36, 0.34);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #544526;
+  background: rgba(255, 255, 255, 0.84);
+  gap: 0;
+}
+
+.button--tool__icon {
+  font-size: 0.9rem;
+  line-height: 1;
+  opacity: 0.85;
 }
 
 .button--tool.is-active {
-  background: #d8ae2f;
+  background: #9b7a22;
   color: #ffffff;
-  border-color: #b88f20;
+  border-color: #896913;
+  box-shadow: 0 4px 10px rgba(83, 60, 6, 0.22);
+}
+
+.button--tool.is-active .button--tool__icon {
+  opacity: 1;
+}
+
+.button--tool--clear {
+  border-style: solid;
+  border-color: rgba(153, 80, 59, 0.38);
+  color: #7d3a2d;
 }
 
 .button--tool:disabled {
@@ -615,14 +653,19 @@ a {
   }
 
   .annotation-toolbar {
-    justify-content: flex-start;
+    align-items: stretch;
   }
 
   .annotation-toolbar--floating {
-    top: 10px;
-    right: 10px;
-    left: 10px;
-    max-width: none;
+    top: 8px;
+    right: 8px;
+    left: auto;
+    max-width: calc(100% - 16px);
+    padding: 4px;
+  }
+
+  .annotation-toolbar__group {
+    justify-content: flex-end;
   }
 
   .viewer-frame-wrap {
