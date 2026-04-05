@@ -65,6 +65,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
         }
       />
       <section className="viewer-frame-wrap" ref={viewerFrameWrapRef}>
+        <div className="viewer-frame-hotspot" aria-hidden="true" />
         <div className="viewer-frame-controls">
           <button
             className="button button--icon"
