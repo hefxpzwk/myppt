@@ -460,6 +460,34 @@ a {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.annotation-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.button--tool {
+  min-height: 38px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+}
+
+.button--tool.is-active {
+  background: #d8ae2f;
+  color: #ffffff;
+  border-color: #b88f20;
+}
+
+.button--tool:disabled {
+  opacity: 0.56;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .viewer-frame-wrap {
@@ -484,6 +512,47 @@ a {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.viewer-annotation-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.viewer-annotation-layer.is-passive {
+  pointer-events: none;
+}
+
+.viewer-annotation-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.viewer-annotation-canvas--none {
+  cursor: default;
+}
+
+.viewer-annotation-canvas--pen,
+.viewer-annotation-canvas--highlight {
+  cursor: crosshair;
+}
+
+.viewer-annotation-canvas--pointer {
+  cursor: none;
+}
+
+.viewer-pointer-dot {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  background: rgba(230, 42, 42, 0.92);
+  box-shadow: 0 0 0 6px rgba(255, 84, 84, 0.25);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 @media (max-width: 980px) {
@@ -530,6 +599,14 @@ a {
 
   .top-bar {
     flex-direction: column;
+  }
+
+  .viewer-actions {
+    justify-content: flex-start;
+  }
+
+  .annotation-toolbar {
+    justify-content: flex-start;
   }
 
   .viewer-frame-wrap {
