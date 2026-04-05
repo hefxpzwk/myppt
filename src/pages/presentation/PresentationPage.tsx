@@ -280,26 +280,6 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
         subtitle={presentation.description}
         action={
           <div className="viewer-actions">
-            <div className="annotation-toolbar" role="toolbar" aria-label="Annotation tools">
-              {(['none', 'pen', 'highlight', 'pointer'] as AnnotationTool[]).map((nextTool) => (
-                <button
-                  key={nextTool}
-                  className={`button button--ghost button--tool ${tool === nextTool ? 'is-active' : ''}`}
-                  type="button"
-                  onClick={() => setTool(nextTool)}
-                >
-                  {ANNOTATION_TOOL_LABELS[nextTool]}
-                </button>
-              ))}
-              <button
-                className="button button--ghost button--tool"
-                type="button"
-                onClick={handleClearAnnotations}
-                disabled={strokes.length === 0 && !pointerPoint}
-              >
-                지우기
-              </button>
-            </div>
             <button
               className="button button--icon"
               type="button"
@@ -323,6 +303,26 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
           allowFullScreen
           sandbox="allow-same-origin allow-scripts allow-popups"
         />
+        <div className="annotation-toolbar annotation-toolbar--floating" role="toolbar" aria-label="Annotation tools">
+          {(['none', 'pen', 'highlight', 'pointer'] as AnnotationTool[]).map((nextTool) => (
+            <button
+              key={nextTool}
+              className={`button button--ghost button--tool ${tool === nextTool ? 'is-active' : ''}`}
+              type="button"
+              onClick={() => setTool(nextTool)}
+            >
+              {ANNOTATION_TOOL_LABELS[nextTool]}
+            </button>
+          ))}
+          <button
+            className="button button--ghost button--tool"
+            type="button"
+            onClick={handleClearAnnotations}
+            disabled={strokes.length === 0 && !pointerPoint}
+          >
+            지우기
+          </button>
+        </div>
         <div className={`viewer-annotation-layer ${tool === 'none' ? 'is-passive' : ''}`}>
           <canvas
             ref={annotationCanvasRef}

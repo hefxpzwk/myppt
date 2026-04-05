@@ -471,6 +471,14 @@ a {
   justify-content: flex-end;
 }
 
+.annotation-toolbar--floating {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  max-width: calc(100% - 24px);
+}
+
 .button--tool {
   min-height: 38px;
   padding: 8px 10px;
@@ -517,6 +525,7 @@ a {
 .viewer-annotation-layer {
   position: absolute;
   inset: 0;
+  z-index: 4;
 }
 
 .viewer-annotation-layer.is-passive {
@@ -607,6 +616,13 @@ a {
 
   .annotation-toolbar {
     justify-content: flex-start;
+  }
+
+  .annotation-toolbar--floating {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
   }
 
   .viewer-frame-wrap {
