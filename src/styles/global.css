@@ -488,10 +488,15 @@ a {
 }
 
 .viewer-frame-controls .button--icon {
-  background: rgba(18, 18, 18, 0.72);
-  border-color: rgba(255, 255, 255, 0.45);
+  background: transparent;
+  border-color: transparent;
   color: #ffffff;
-  backdrop-filter: blur(4px);
+  box-shadow: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.viewer-frame-controls .button--icon:hover {
+  box-shadow: none;
 }
 
 .viewer-frame {
