@@ -190,12 +190,20 @@
 
 ## 6.1 발표 메타데이터
 
-발표 목록은 우선 정적 데이터 파일로 관리한다.
+발표 목록은 정적 데이터 파일로 관리한다.
+기본 운영 방식은 `public/slides`의 HTML 파일을 스캔해 메타데이터를 빌드/개발 시작 전에 자동 생성하는 방식이다.
 
 후보 형식:
 
 - `slides.ts`
 - `slides.json`
+
+현재 권장 구현:
+
+- 생성 스크립트: `scripts/generate-presentations.mjs`
+  - 발표 HTML을 스캔해 메타데이터를 만들고, 각 발표 첫 화면 PNG를 `public/slides/.thumbnails`에 생성
+- 생성 결과: `src/data/slides.generated.ts`
+- 앱 진입 데이터: `src/data/slides.ts`
 
 권장 최소 필드는 아래와 같다.
 
