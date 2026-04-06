@@ -117,7 +117,16 @@ export function DashboardPage() {
               aria-label={`${presentation.title} open presentation`}
             >
               <article className="presentation-card">
-                <div className="presentation-card__cover" aria-hidden="true" />
+                <div className="presentation-card__cover" aria-hidden="true">
+                  {presentation.thumbnail ? (
+                    <img
+                      className="presentation-card__cover-image"
+                      src={presentation.thumbnail}
+                      loading="lazy"
+                      alt=""
+                    />
+                  ) : null}
+                </div>
                 <p className="presentation-card__badge">
                   {presentation.featured ? 'Featured' : 'Standard'}
                 </p>

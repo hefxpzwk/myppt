@@ -323,6 +323,8 @@ a {
 }
 
 .presentation-card__cover {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
@@ -330,6 +332,14 @@ a {
   background:
     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.85), transparent 55%),
     linear-gradient(135deg, #d7b875, #b38a3f);
+}
+
+.presentation-card__cover-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  background: #ffffff;
 }
 
 .presentation-card--empty {

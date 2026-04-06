@@ -201,6 +201,7 @@
 현재 권장 구현:
 
 - 생성 스크립트: `scripts/generate-presentations.mjs`
+  - 발표 HTML을 스캔해 메타데이터를 만들고, 각 발표 첫 화면 PNG를 `public/slides/.thumbnails`에 생성
 - 생성 결과: `src/data/slides.generated.ts`
 - 앱 진입 데이터: `src/data/slides.ts`
 
