@@ -11,4 +11,11 @@ export const generatedPresentations: PresentationMeta[] = [
     updatedAt: "2026-04-06",
     thumbnail: "/slides/.thumbnails/ai-mentoring%20(1).png",
   },
+  {
+    id: "economic-terms-10",
+    title: "Economic Terms 10",
+    path: "/slides/economic-terms-10.html",
+    updatedAt: "2026-04-06",
+    thumbnail: "/slides/.thumbnails/economic-terms-10.png",
+  },
 ];
