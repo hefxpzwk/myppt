@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경제 용어 10개 핵심 정리</title>
+    <style>
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-9Black.woff2') format('woff2');
+            font-weight: 900;
+            font-display: swap;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f6f3ed;
+            --text: #1f2d3a;
+            --accent: #1f7a8c;
+            --muted: #66727f;
+            --line: #cfd7de;
+            --card: #e9eff3;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'A2z', sans-serif;
+        }
+
+        #deck { width: 100vw; height: 100vh; position: relative; }
+
+        section {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8vh 10vw;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            background: var(--bg);
+        }
+
+        section.active { opacity: 1; pointer-events: all; }
+
+        .eyebrow {
+            font-size: clamp(0.65rem, 1vw, 0.8rem);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 2.2vh;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 6.5vw, 5.6rem);
+            line-height: 1.02;
+            letter-spacing: -0.03em;
+            font-weight: 900;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4.5vw, 3.6rem);
+            line-height: 1.06;
+            letter-spacing: -0.02em;
+            font-weight: 900;
+            margin-bottom: 3vh;
+        }
+
+        p {
+            font-size: clamp(0.95rem, 1.55vw, 1.15rem);
+            line-height: 1.8;
+            max-width: 72ch;
+            color: var(--text);
+        }
+
+        .sub {
+            color: var(--muted);
+            margin-top: 2vh;
+            font-size: clamp(1rem, 1.7vw, 1.3rem);
+        }
+
+        .hl { color: var(--accent); font-weight: 700; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 2.4vh 2.2vw;
+            margin-top: 2vh;
+        }
+
+        .card h3 {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            margin-bottom: 1.1vh;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .card p { color: var(--text); font-size: clamp(0.88rem, 1.35vw, 1rem); }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.4vw;
+            margin-top: 2vh;
+        }
+
+        .term-line {
+            margin-top: 1.8vh;
+            font-size: clamp(0.9rem, 1.35vw, 1rem);
+            color: var(--muted);
+        }
+
+        .term-line strong { color: var(--text); font-weight: 700; }
+
+        ul {
+            margin-top: 2vh;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2vh;
+        }
+
+        li {
+            font-size: clamp(0.92rem, 1.45vw, 1.05rem);
+            line-height: 1.65;
+            padding-left: 1.4em;
+            position: relative;
+            color: var(--text);
+        }
+
+        li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 900;
+        }
+
+        .rule {
+            width: 4.6rem;
+            height: 2px;
+            background: var(--accent);
+            margin: 2.2vh 0;
+        }
+
+        #counter {
+            position: fixed;
+            right: 3.2vw;
+            bottom: 3vh;
+            color: var(--muted);
+            font-size: clamp(0.68rem, 1vw, 0.82rem);
+            letter-spacing: 0.12em;
+            z-index: 20;
+        }
+
+        #progress {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.35s ease;
+            z-index: 20;
+        }
+
+        .hint {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 3vh;
+            color: var(--muted);
+            font-size: clamp(0.62rem, 0.9vw, 0.76rem);
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+            z-index: 20;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 900px) {
+            section { padding: 7vh 6vw; }
+            .grid-2 { grid-template-columns: 1fr; gap: 1.6vh; }
+            p { max-width: none; }
+        }
+    </style>
+</head>
+<body>
+<div id="deck">
+    <section id="s1" class="active">
+        <div class="eyebrow">경제 기초 발표</div>
+        <h1>경제 용어<br><span class="hl">10개 핵심 정리</span></h1>
+        <p class="sub">실생활에서 자주 듣는 경제 개념을 짧고 정확하게 이해하기</p>
+    </section>
+
+    <section id="s2">
+        <div class="eyebrow">목차</div>
+        <h2>오늘 다룰 10가지</h2>
+        <div class="grid-2">
+            <div class="card"><h3>1. 인플레이션</h3><p>물가가 전반적으로 오르는 현상</p></div>
+            <div class="card"><h3>2. 디플레이션</h3><p>물가가 전반적으로 하락하는 현상</p></div>
+            <div class="card"><h3>3. 기준금리</h3><p>중앙은행이 정하는 대표 금리</p></div>
+            <div class="card"><h3>4. GDP</h3><p>한 나라의 국내 총생산</p></div>
+            <div class="card"><h3>5. 경기침체</h3><p>경제활동이 장기간 둔화되는 상태</p></div>
+            <div class="card"><h3>6. 환율</h3><p>한 통화를 다른 통화로 바꾸는 비율</p></div>
+            <div class="card"><h3>7. 실업률</h3><p>일할 의사는 있지만 일하지 못하는 비율</p></div>
+            <div class="card"><h3>8. 재정정책</h3><p>정부 지출·세금으로 경기 조절</p></div>
+            <div class="card"><h3>9. 통화정책</h3><p>돈의 양과 금리로 경기 조절</p></div>
+            <div class="card"><h3>10. 수요와 공급</h3><p>가격을 결정하는 가장 기본 원리</p></div>
+        </div>
+    </section>
+
+    <section id="s3">
+        <div class="eyebrow">용어 1</div>
+        <h2>인플레이션 (Inflation)</h2>
+        <p><span class="hl">정의:</span> 물가가 지속적으로 올라 같은 돈으로 살 수 있는 양이 줄어드는 현상입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 작년 5,000원이던 점심이 올해 6,000원이 되는 경우</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 현금의 실질 구매력이 감소합니다.</div>
+    </section>
+
+    <section id="s4">
+        <div class="eyebrow">용어 2</div>
+        <h2>디플레이션 (Deflation)</h2>
+        <p><span class="hl">정의:</span> 물가가 전반적으로 내려가고 소비와 투자가 함께 위축되는 현상입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 가격이 계속 내려갈 것 같아 소비를 미루는 상황</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 기업 매출 감소, 고용 악화로 이어질 수 있습니다.</div>
+    </section>
+
+    <section id="s5">
+        <div class="eyebrow">용어 3</div>
+        <h2>기준금리 (Base Rate)</h2>
+        <p><span class="hl">정의:</span> 중앙은행이 금융시장에 신호를 주기 위해 정하는 기준이 되는 금리입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 기준금리 인상 시 대출이자 부담 증가</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 소비·투자·환율까지 폭넓게 영향을 줍니다.</div>
+    </section>
+
+    <section id="s6">
+        <div class="eyebrow">용어 4</div>
+        <h2>GDP (국내총생산)</h2>
+        <p><span class="hl">정의:</span> 일정 기간 한 나라 안에서 생산된 재화와 서비스의 총가치입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 분기 GDP 성장률로 경기 확장/둔화를 판단</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 국가 경제 규모와 성장 속도를 보여줍니다.</div>
+    </section>
+
+    <section id="s7">
+        <div class="eyebrow">용어 5</div>
+        <h2>경기침체 (Recession)</h2>
+        <p><span class="hl">정의:</span> 생산, 소비, 투자 등 경제활동이 눈에 띄게 줄어드는 국면입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 기업 실적 악화와 신규 채용 축소가 동시에 발생</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 소득 감소와 실업 증가 위험이 커집니다.</div>
+    </section>
+
+    <section id="s8">
+        <div class="eyebrow">용어 6</div>
+        <h2>환율 (Exchange Rate)</h2>
+        <p><span class="hl">정의:</span> 한 나라 돈을 다른 나라 돈으로 교환할 때 적용되는 비율입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 원/달러 환율 상승 시 수입 물가 부담 증가</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 수출입 가격, 해외여행 비용, 물가에 연결됩니다.</div>
+    </section>
+
+    <section id="s9">
+        <div class="eyebrow">용어 7</div>
+        <h2>실업률 (Unemployment Rate)</h2>
+        <p><span class="hl">정의:</span> 경제활동인구 중에서 일자리를 찾고 있지만 취업하지 못한 비율입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 경기 둔화기에 실업률 상승</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 가계 소득과 소비 심리에 직접 영향을 줍니다.</div>
+    </section>
+
+    <section id="s10">
+        <div class="eyebrow">용어 8</div>
+        <h2>재정정책 (Fiscal Policy)</h2>
+        <p><span class="hl">정의:</span> 정부가 지출과 세금을 조정해 경기를 안정시키려는 정책입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 경기침체 시 인프라 투자 확대, 세금 감면</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 총수요를 늘리거나 줄여 경기 변동 폭을 조절합니다.</div>
+    </section>
+
+    <section id="s11">
+        <div class="eyebrow">용어 9</div>
+        <h2>통화정책 (Monetary Policy)</h2>
+        <p><span class="hl">정의:</span> 중앙은행이 금리와 통화량을 조절해 물가와 경기를 관리하는 정책입니다.</p>
+        <div class="term-line"><strong>예시:</strong> 물가 상승 압력이 크면 금리 인상으로 수요 억제</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 인플레이션 안정과 경기 균형 유지에 사용됩니다.</div>
+    </section>
+
+    <section id="s12">
+        <div class="eyebrow">용어 10</div>
+        <h2>수요와 공급 (Demand & Supply)</h2>
+        <p><span class="hl">정의:</span> 가격은 사고자 하는 양(수요)과 팔고자 하는 양(공급)이 만나는 지점에서 결정됩니다.</p>
+        <div class="term-line"><strong>예시:</strong> 인기 상품의 수요 급증 시 가격 상승</div>
+        <div class="term-line"><strong>핵심 영향:</strong> 시장 가격과 거래량 변화를 설명하는 가장 기본 원리입니다.</div>
+    </section>
+
+    <section id="s13">
+        <div class="eyebrow">정리</div>
+        <h2>한 장으로 다시 보기</h2>
+        <div class="rule"></div>
+        <ul>
+            <li><span class="hl">물가:</span> 인플레이션과 디플레이션</li>
+            <li><span class="hl">정책:</span> 기준금리, 재정정책, 통화정책</li>
+            <li><span class="hl">지표:</span> GDP, 실업률, 환율</li>
+            <li><span class="hl">시장 원리:</span> 수요와 공급</li>
+            <li><span class="hl">경기 판단:</span> 경기침체 신호를 함께 관찰</li>
+        </ul>
+        <p class="sub">좌우 화살표 키로 언제든 다시 이동하면서 복습할 수 있습니다.</p>
+    </section>
+</div>
+
+<div id="counter">1 / 13</div>
+<div id="progress"></div>
+<div class="hint">← 이전 / → 다음</div>
+
+<script>
+    const slides = document.querySelectorAll('section');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const total = slides.length;
+    let current = 0;
+
+    function goTo(index) {
+        if (index < 0 || index >= total) return;
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        counter.textContent = `${current + 1} / ${total}`;
+        progress.style.width = `${((current + 1) / total) * 100}%`;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'ArrowRight') next();
+        if (event.key === 'ArrowLeft') prev();
+    });
+
+    goTo(0);
+</script>
+</body>
+</html>
