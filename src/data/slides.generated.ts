@@ -9,5 +9,6 @@ export const generatedPresentations: PresentationMeta[] = [
     title: "Ai Mentoring (1)",
     path: "/slides/ai-mentoring%20(1).html",
     updatedAt: "2026-04-05",
+    thumbnail: "/slides/.thumbnails/ai-mentoring%20(1).png",
   },
 ];

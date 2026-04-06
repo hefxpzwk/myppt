@@ -1,8 +1,11 @@
+import { createServer } from 'node:http';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 const PROJECT_ROOT = process.cwd();
-const SLIDES_DIRECTORY = path.resolve(PROJECT_ROOT, 'public/slides');
+const PUBLIC_DIRECTORY = path.resolve(PROJECT_ROOT, 'public');
+const SLIDES_DIRECTORY = path.resolve(PUBLIC_DIRECTORY, 'slides');
+const THUMBNAILS_DIRECTORY = path.resolve(SLIDES_DIRECTORY, '.thumbnails');
 const OUTPUT_FILE = path.resolve(PROJECT_ROOT, 'src/data/slides.generated.ts');
 
 function toPosixPath(filePath) {
@@ -28,6 +31,42 @@ function formatTitle(fileName) {
     .split(' ')
     .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
     .join(' ');
+}
+
+function getContentType(filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+
+  switch (extension) {
+    case '.html':
+      return 'text/html; charset=utf-8';
+    case '.css':
+      return 'text/css; charset=utf-8';
+    case '.js':
+      return 'text/javascript; charset=utf-8';
+    case '.json':
+      return 'application/json; charset=utf-8';
+    case '.svg':
+      return 'image/svg+xml';
+    case '.png':
+      return 'image/png';
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg';
+    case '.gif':
+      return 'image/gif';
+    case '.webp':
+      return 'image/webp';
+    case '.ico':
+      return 'image/x-icon';
+    case '.woff2':
+      return 'font/woff2';
+    case '.woff':
+      return 'font/woff';
+    case '.ttf':
+      return 'font/ttf';
+    default:
+      return 'application/octet-stream';
+  }
 }
 
 async function collectHtmlFiles(directory) {
@@ -75,6 +114,144 @@ function createUniqueId(baseId, idUsage) {
   return `${safeBaseId}-${nextCount}`;
 }
 
+async function startStaticServer(rootDirectory) {
+  const rootDirectoryWithSeparator = `${rootDirectory}${path.sep}`;
+
+  const server = createServer(async (request, response) => {
+    try {
+      const requestUrl = new URL(request.url ?? '/', 'http://127.0.0.1');
+      const decodedPath = decodeURIComponent(requestUrl.pathname);
+      const requestedPath = decodedPath === '/' ? '/index.html' : decodedPath;
+      const absolutePath = path.resolve(rootDirectory, `.${requestedPath}`);
+
+      if (absolutePath !== rootDirectory && !absolutePath.startsWith(rootDirectoryWithSeparator)) {
+        response.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+        response.end('Forbidden');
+        return;
+      }
+
+      let filePath = absolutePath;
+      const stat = await fs.stat(filePath);
+
+      if (stat.isDirectory()) {
+        filePath = path.join(filePath, 'index.html');
+      }
+
+      const buffer = await fs.readFile(filePath);
+      response.writeHead(200, {
+        'Content-Type': getContentType(filePath),
+        'Cache-Control': 'no-store',
+      });
+      response.end(buffer);
+    } catch (error) {
+      response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      response.end('Not Found');
+    }
+  });
+
+  await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => resolve());
+  });
+
+  const address = server.address();
+  if (!address || typeof address === 'string') {
+    throw new Error('Unable to start local static server for thumbnail generation.');
+  }
+
+  return {
+    origin: `http://127.0.0.1:${address.port}`,
+    close: () =>
+      new Promise((resolve, reject) => {
+        server.close((error) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve();
+        });
+      }),
+  };
+}
+
+async function shouldRegenerateThumbnail(htmlAbsolutePath, thumbnailAbsolutePath) {
+  try {
+    const [htmlStat, thumbnailStat] = await Promise.all([fs.stat(htmlAbsolutePath), fs.stat(thumbnailAbsolutePath)]);
+    return thumbnailStat.mtimeMs < htmlStat.mtimeMs;
+  } catch {
+    return true;
+  }
+}
+
+async function generateThumbnails(presentations) {
+  if (presentations.length === 0) {
+    return;
+  }
+
+  let chromium;
+
+  try {
+    ({ chromium } = await import('playwright'));
+  } catch {
+    console.warn('Thumbnail generation skipped: playwright is not installed.');
+    return;
+  }
+
+  let localServer;
+  let browser;
+  let context;
+
+  try {
+    localServer = await startStaticServer(PUBLIC_DIRECTORY);
+    try {
+      browser = await chromium.launch({ headless: true });
+    } catch (error) {
+      console.warn(`Thumbnail generation skipped: failed to launch chromium (${String(error)}).`);
+      return;
+    }
+    context = await browser.newContext({ viewport: { width: 1600, height: 900 } });
+
+    for (const presentation of presentations) {
+      const mustRegenerate = await shouldRegenerateThumbnail(
+        presentation.absolutePath,
+        presentation.thumbnailAbsolutePath,
+      );
+
+      if (!mustRegenerate) {
+        continue;
+      }
+
+      await fs.mkdir(path.dirname(presentation.thumbnailAbsolutePath), { recursive: true });
+
+      const page = await context.newPage();
+      const thumbnailUrl = `${localServer.origin}${presentation.path}`;
+
+      try {
+        await page.goto(thumbnailUrl, { waitUntil: 'domcontentloaded', timeout: 20_000 });
+        await page.waitForTimeout(700);
+        await page.screenshot({ path: presentation.thumbnailAbsolutePath, type: 'png' });
+      } catch (error) {
+        console.warn(`Failed to capture thumbnail for ${presentation.path}: ${String(error)}`);
+      } finally {
+        await page.close();
+      }
+    }
+  } finally {
+    if (context) {
+      await context.close();
+    }
+
+    if (browser) {
+      await browser.close();
+    }
+
+    if (localServer) {
+      await localServer.close();
+    }
+  }
+}
+
 async function buildPresentations() {
   const htmlFiles = await collectHtmlFiles(SLIDES_DIRECTORY);
   const sortedFiles = htmlFiles.sort((left, right) => left.localeCompare(right));
@@ -83,15 +260,23 @@ async function buildPresentations() {
   const presentations = await Promise.all(
     sortedFiles.map(async (absolutePath) => {
       const relativePath = toPosixPath(path.relative(SLIDES_DIRECTORY, absolutePath));
-      const slugBase = slugify(relativePath.replace(/\.html$/i, '').replace(/\//g, '-'));
+      const pathWithoutExtension = relativePath.replace(/\.html$/i, '');
+      const slugBase = slugify(pathWithoutExtension.replace(/\//g, '-'));
       const id = createUniqueId(slugBase, idUsage);
       const stat = await fs.stat(absolutePath);
+
+      const thumbnailRelativePath = `${pathWithoutExtension}.png`;
+      const thumbnailAbsolutePath = path.resolve(THUMBNAILS_DIRECTORY, thumbnailRelativePath);
+      const thumbnail = encodeURI(`/slides/.thumbnails/${toPosixPath(thumbnailRelativePath)}`);
 
       return {
         id,
         title: formatTitle(path.basename(relativePath)),
         path: encodeURI(`/slides/${relativePath}`),
         updatedAt: stat.mtime.toISOString().slice(0, 10),
+        thumbnail,
+        absolutePath,
+        thumbnailAbsolutePath,
       };
     }),
   );
@@ -99,17 +284,50 @@ async function buildPresentations() {
   return presentations;
 }
 
+async function finalizePresentations(presentations) {
+  const finalized = await Promise.all(
+    presentations.map(async (presentation) => {
+      try {
+        await fs.access(presentation.thumbnailAbsolutePath);
+        return {
+          id: presentation.id,
+          title: presentation.title,
+          path: presentation.path,
+          updatedAt: presentation.updatedAt,
+          thumbnail: presentation.thumbnail,
+        };
+      } catch {
+        return {
+          id: presentation.id,
+          title: presentation.title,
+          path: presentation.path,
+          updatedAt: presentation.updatedAt,
+        };
+      }
+    }),
+  );
+
+  return finalized;
+}
+
 function renderGeneratedFile(presentations) {
   const records = presentations
     .map((presentation) => {
-      return [
+      const lines = [
         '  {',
         `    id: ${JSON.stringify(presentation.id)},`,
         `    title: ${JSON.stringify(presentation.title)},`,
         `    path: ${JSON.stringify(presentation.path)},`,
         `    updatedAt: ${JSON.stringify(presentation.updatedAt)},`,
-        '  },',
-      ].join('\n');
+      ];
+
+      if ('thumbnail' in presentation && presentation.thumbnail) {
+        lines.push(`    thumbnail: ${JSON.stringify(presentation.thumbnail)},`);
+      }
+
+      lines.push('  },');
+
+      return lines.join('\n');
     })
     .join('\n');
 
@@ -127,13 +345,15 @@ function renderGeneratedFile(presentations) {
 }
 
 async function main() {
-  const presentations = await buildPresentations();
-  const fileContent = renderGeneratedFile(presentations);
+  const builtPresentations = await buildPresentations();
+  await generateThumbnails(builtPresentations);
+  const finalizedPresentations = await finalizePresentations(builtPresentations);
+  const fileContent = renderGeneratedFile(finalizedPresentations);
 
   await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
   await fs.writeFile(OUTPUT_FILE, fileContent, 'utf8');
 
-  console.log(`Generated ${presentations.length} presentation entries.`);
+  console.log(`Generated ${finalizedPresentations.length} presentation entries.`);
 }
 
 main().catch((error) => {
