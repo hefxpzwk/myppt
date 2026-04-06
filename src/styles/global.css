@@ -492,6 +492,7 @@ a {
 }
 
 .annotation-toolbar--floating {
+  --toolbar-proximity: 0;
   position: absolute;
   left: 10px;
   bottom: 10px;
@@ -503,6 +504,13 @@ a {
   background: rgba(255, 255, 255, 0.64);
   box-shadow: 0 6px 16px rgba(36, 25, 0, 0.12);
   backdrop-filter: blur(2px);
+  opacity: calc(0.22 + (var(--toolbar-proximity) * 0.78));
+  transition: opacity 180ms ease;
+}
+
+.annotation-toolbar--floating:hover,
+.annotation-toolbar--floating:focus-within {
+  opacity: 1;
 }
 
 .button--tool {

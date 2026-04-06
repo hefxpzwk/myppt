@@ -36,6 +36,7 @@ const ANNOTATION_TOOL_ICONS: Record<AnnotationTool, string> = {
 
 const PARTIAL_ERASE_RADIUS = 0.02;
 const MIN_STROKE_POINTS = 2;
+const TOOLBAR_PROXIMITY_RADIUS = 220;
 
 function clampPointValue(value: number) {
   return Math.min(1, Math.max(0, value));
@@ -84,6 +85,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
   const viewerFrameWrapRef = useRef<HTMLElement | null>(null);
   const viewerFrameRef = useRef<HTMLIFrameElement | null>(null);
   const annotationCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const annotationToolbarRef = useRef<HTMLDivElement | null>(null);
   const drawMenuRef = useRef<HTMLDivElement | null>(null);
   const eraseMenuRef = useRef<HTMLDivElement | null>(null);
   const isDrawingRef = useRef(false);
@@ -93,6 +95,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
   const [pointerPoint, setPointerPoint] = useState<AnnotationPoint | null>(null);
   const [isDrawMenuOpen, setIsDrawMenuOpen] = useState(false);
   const [isEraseMenuOpen, setIsEraseMenuOpen] = useState(false);
+  const [toolbarProximity, setToolbarProximity] = useState(0);
   const presentation = getPresentationById(presentationId);
 
   const focusPresentationFrame = useCallback(() => {
@@ -256,6 +259,43 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
       frame.removeEventListener('load', handleFrameLoad);
     };
   }, [syncPresentationViewport]);
+
+  useEffect(() => {
+    const frameWrap = viewerFrameWrapRef.current;
+    const toolbar = annotationToolbarRef.current;
+
+    if (!frameWrap || !toolbar) {
+      return;
+    }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') {
+        setToolbarProximity(1);
+        return;
+      }
+
+      const rect = toolbar.getBoundingClientRect();
+      const nearestX = Math.max(rect.left, Math.min(event.clientX, rect.right));
+      const nearestY = Math.max(rect.top, Math.min(event.clientY, rect.bottom));
+      const distanceX = event.clientX - nearestX;
+      const distanceY = event.clientY - nearestY;
+      const distance = Math.hypot(distanceX, distanceY);
+      const nextProximity = Math.max(0, 1 - distance / TOOLBAR_PROXIMITY_RADIUS);
+      setToolbarProximity(nextProximity);
+    };
+
+    const handlePointerLeave = () => {
+      setToolbarProximity(0);
+    };
+
+    frameWrap.addEventListener('pointermove', handlePointerMove);
+    frameWrap.addEventListener('pointerleave', handlePointerLeave);
+
+    return () => {
+      frameWrap.removeEventListener('pointermove', handlePointerMove);
+      frameWrap.removeEventListener('pointerleave', handlePointerLeave);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isEraseMenuOpen && !isDrawMenuOpen) {
@@ -483,9 +523,15 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
           tabIndex={-1}
         />
         <div
+          ref={annotationToolbarRef}
           className={`annotation-toolbar annotation-toolbar--floating annotation-toolbar--mode-${tool}`}
           role="toolbar"
           aria-label="Annotation tools"
+          style={
+            {
+              '--toolbar-proximity': toolbarProximity.toFixed(3)
+            } as React.CSSProperties
+          }
         >
           <div className="annotation-toolbar__group">
             <button
