@@ -42,6 +42,17 @@ function clampPointValue(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
+function getDownloadFileName(path: string, presentationId: string) {
+  const pathSegments = path.split('/').filter(Boolean);
+  const lastSegment = pathSegments[pathSegments.length - 1];
+
+  if (lastSegment && lastSegment.includes('.')) {
+    return decodeURIComponent(lastSegment);
+  }
+
+  return `${presentationId}.html`;
+}
+
 function getDistanceSquared(a: AnnotationPoint, b: AnnotationPoint) {
   const dx = a.x - b.x;
   const dy = a.y - b.y;
@@ -97,6 +108,9 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
   const [isEraseMenuOpen, setIsEraseMenuOpen] = useState(false);
   const [toolbarProximity, setToolbarProximity] = useState(0);
   const presentation = getPresentationById(presentationId);
+  const downloadFileName = presentation
+    ? getDownloadFileName(presentation.path, presentation.id)
+    : '';
 
   const focusPresentationFrame = useCallback(() => {
     viewerFrameRef.current?.focus();
@@ -497,6 +511,13 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
         subtitle={presentation.description}
         action={
           <div className="viewer-actions">
+            <a
+              className="button button--ghost"
+              href={presentation.path}
+              download={downloadFileName}
+            >
+              Download Source
+            </a>
             <button
               className="button button--icon"
               type="button"
