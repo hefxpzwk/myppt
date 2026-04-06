@@ -95,6 +95,16 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
   const [isEraseMenuOpen, setIsEraseMenuOpen] = useState(false);
   const presentation = getPresentationById(presentationId);
 
+  const focusPresentationFrame = useCallback(() => {
+    viewerFrameRef.current?.focus();
+
+    try {
+      viewerFrameRef.current?.contentWindow?.focus();
+    } catch {
+      // Browser focus policies may block forwarding focus into the frame.
+    }
+  }, []);
+
   const redrawAnnotationCanvas = useCallback(() => {
     const canvas = annotationCanvasRef.current;
 
@@ -166,6 +176,27 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
     redrawAnnotationCanvas();
   }, [redrawAnnotationCanvas]);
 
+  const syncPresentationViewport = useCallback(() => {
+    fitAnnotationCanvas();
+    focusPresentationFrame();
+
+    try {
+      viewerFrameRef.current?.contentWindow?.dispatchEvent(new Event('resize'));
+    } catch {
+      // Cross-origin or browser policy can block direct frame window access.
+    }
+
+    requestAnimationFrame(() => {
+      fitAnnotationCanvas();
+
+      try {
+        viewerFrameRef.current?.contentWindow?.dispatchEvent(new Event('resize'));
+      } catch {
+        // Cross-origin or browser policy can block direct frame window access.
+      }
+    });
+  }, [fitAnnotationCanvas, focusPresentationFrame]);
+
   useEffect(() => {
     strokesRef.current = strokes;
     redrawAnnotationCanvas();
@@ -197,6 +228,34 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
       setPointerPoint(null);
     }
   }, [tool]);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      syncPresentationViewport();
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [syncPresentationViewport]);
+
+  useEffect(() => {
+    const frame = viewerFrameRef.current;
+    if (!frame) {
+      return;
+    }
+
+    const handleFrameLoad = () => {
+      syncPresentationViewport();
+    };
+
+    frame.addEventListener('load', handleFrameLoad);
+    return () => {
+      frame.removeEventListener('load', handleFrameLoad);
+    };
+  }, [syncPresentationViewport]);
 
   useEffect(() => {
     if (!isEraseMenuOpen && !isDrawMenuOpen) {
@@ -232,10 +291,12 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
 
     try {
       if (document.fullscreenElement) {
+        syncPresentationViewport();
         return;
       }
 
       await viewerFrameWrapRef.current.requestFullscreen();
+      syncPresentationViewport();
     } catch {
       // Fullscreen requests may fail due to browser permissions or policy.
     }
@@ -373,13 +434,7 @@ export function PresentationPage({ presentationId }: PresentationPageProps) {
     setIsEraseMenuOpen(false);
 
     requestAnimationFrame(() => {
-      viewerFrameRef.current?.focus();
-
-      try {
-        viewerFrameRef.current?.contentWindow?.focus();
-      } catch {
-        // Browser focus policies may block forwarding focus into the frame.
-      }
+      focusPresentationFrame();
     });
   };
 
