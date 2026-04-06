@@ -8,7 +8,7 @@ export const generatedPresentations: PresentationMeta[] = [
     id: "ai-mentoring-1",
     title: "Ai Mentoring (1)",
     path: "/slides/ai-mentoring%20(1).html",
-    updatedAt: "2026-04-05",
+    updatedAt: "2026-04-06",
     thumbnail: "/slides/.thumbnails/ai-mentoring%20(1).png",
   },
 ];
