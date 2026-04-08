@@ -5,6 +5,13 @@ import type { PresentationMeta } from './presentation-meta';
 
 export const generatedPresentations: PresentationMeta[] = [
   {
+    id: "ai-cli-start-guide",
+    title: "Ai Cli Start Guide",
+    path: "/slides/ai-cli-start-guide.html",
+    updatedAt: "2026-04-08",
+    thumbnail: "/slides/.thumbnails/ai-cli-start-guide.png",
+  },
+  {
     id: "ai-mentoring-1",
     title: "Ai Mentoring (1)",
     path: "/slides/ai-mentoring%20(1).html",

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Coding Agent 실무 운영 가이드</title>
+    <style>
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2z';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-9Black.woff2') format('woff2');
+            font-weight: 900;
+            font-display: swap;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f5f1e9;
+            --bg2: #e8dfd1;
+            --text: #1e2a34;
+            --muted: #5f6c76;
+            --accent: #0d9d88;
+            --accent2: #1a4f66;
+            --line: #cad2d9;
+            --card: #faf7f2;
+            --warn: #be5b3a;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text);
+            font-family: 'A2z', sans-serif;
+            background: radial-gradient(circle at 84% 16%, #ffffff 0%, var(--bg) 44%, var(--bg2) 100%);
+        }
+
+        #deck { width: 100vw; height: 100vh; position: relative; }
+
+        section {
+            position: absolute;
+            inset: 0;
+            padding: 7.2vh 8.5vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        section.active { opacity: 1; pointer-events: all; }
+
+        .eyebrow {
+            font-size: clamp(0.62rem, 0.95vw, 0.8rem);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent2);
+            font-weight: 700;
+            margin-bottom: 2.1vh;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 6.9vw, 5.9rem);
+            line-height: 1.03;
+            letter-spacing: -0.03em;
+            font-weight: 900;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 4.2vw, 3.55rem);
+            line-height: 1.08;
+            letter-spacing: -0.02em;
+            font-weight: 900;
+            margin-bottom: 2.5vh;
+        }
+
+        p {
+            font-size: clamp(0.9rem, 1.45vw, 1.06rem);
+            line-height: 1.74;
+            max-width: 82ch;
+        }
+
+        .sub {
+            margin-top: 2vh;
+            color: var(--muted);
+            font-size: clamp(0.97rem, 1.7vw, 1.2rem);
+        }
+
+        .hl { color: var(--accent); font-weight: 700; }
+        .warn { color: var(--warn); font-weight: 700; }
+
+        .rule {
+            width: 5.2rem;
+            height: 3px;
+            margin: 2.1vh 0;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.7vw;
+            margin-top: 1.5vh;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.3vw;
+            margin-top: 1.5vh;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 2vh 1.3vw;
+        }
+
+        .card h3 {
+            font-size: clamp(0.95rem, 1.55vw, 1.22rem);
+            color: var(--accent2);
+            font-weight: 700;
+            margin-bottom: 0.8vh;
+        }
+
+        .card p {
+            font-size: clamp(0.78rem, 1.19vw, 0.92rem);
+            color: var(--muted);
+            line-height: 1.62;
+            max-width: none;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 1.4vh;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8vh;
+        }
+
+        li {
+            position: relative;
+            padding-left: 1.25em;
+            font-size: clamp(0.84rem, 1.27vw, 0.98rem);
+            line-height: 1.62;
+        }
+
+        li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 900;
+        }
+
+        .term {
+            margin-top: 1.4vh;
+            font-size: clamp(0.8rem, 1.2vw, 0.92rem);
+            color: var(--muted);
+        }
+
+        pre {
+            margin-top: 1.7vh;
+            background: #eef8f6;
+            border: 1px solid #b7dbd4;
+            border-radius: 12px;
+            padding: 1.55vh 1.1vw;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(0.7rem, 1.03vw, 0.85rem);
+            line-height: 1.72;
+            overflow-x: auto;
+        }
+
+        .tag {
+            display: inline-block;
+            border: 1px solid var(--accent2);
+            border-radius: 999px;
+            padding: 0.22em 0.66em;
+            margin-right: 0.35em;
+            margin-bottom: 0.35em;
+            font-size: 0.62rem;
+            color: var(--accent2);
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            background: #edf2f4;
+        }
+
+        #counter {
+            position: fixed;
+            right: 3vw;
+            bottom: 2.7vh;
+            color: var(--muted);
+            font-size: clamp(0.62rem, 0.95vw, 0.78rem);
+            letter-spacing: 0.12em;
+            z-index: 40;
+        }
+
+        #progress {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transition: width 0.3s ease;
+            z-index: 40;
+        }
+
+        .hint {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 2.7vh;
+            color: var(--muted);
+            opacity: 0.72;
+            font-size: clamp(0.57rem, 0.86vw, 0.72rem);
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+            z-index: 40;
+        }
+
+        @media (max-width: 1024px) {
+            section { padding: 6.4vh 6vw; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1vh; }
+            p { max-width: none; }
+        }
+    </style>
+</head>
+<body>
+<div id="deck">
+    <section id="s1" class="active">
+        <div class="eyebrow">Practical Team Training</div>
+        <h1>AI Coding Agent<br><span class="hl">실무 운영 가이드</span></h1>
+        <p class="sub">툴 사용법이 아니라 개발 방식 전환: 지시, 검증, 운영</p>
+    </section>
+
+    <section id="s2">
+        <div class="eyebrow">Core Shift</div>
+        <h2>패러다임 전환부터 이해</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>오해</h3>
+                <p>AI는 코드 생성기다. 필요한 순간에 한 번 호출하면 된다.</p>
+            </div>
+            <div class="card">
+                <h3>현실</h3>
+                <p>AI는 작업을 수행하는 주니어 개발자다. 지시와 관리가 성능을 결정한다.</p>
+            </div>
+        </div>
+        <div class="rule"></div>
+        <p><span class="hl">핵심:</span> "AI로 코딩"이 아니라 "AI에게 일을 시킨다".</p>
+    </section>
+
+    <section id="s3">
+        <div class="eyebrow">Principles</div>
+        <h2>성공률을 올리는 3원칙</h2>
+        <div class="grid-3">
+            <div class="card"><h3>1. 작게 쪼개기</h3><p>큰 작업 1회보다 작은 작업 다회가 정확도와 복구성 모두 높다.</p></div>
+            <div class="card"><h3>2. 명확한 지시</h3><p>목표, 범위, 제약, 완료조건을 숫자와 파일 경로로 고정한다.</p></div>
+            <div class="card"><h3>3. 컨텍스트 관리</h3><p>README, AGENTS.md, 로그, 관련 파일만 넣어 모델 혼선을 줄인다.</p></div>
+        </div>
+    </section>
+
+    <section id="s4">
+        <div class="eyebrow">Workflow</div>
+        <h2>실전 5단계 워크플로우</h2>
+        <ul>
+            <li>0단계: 구조 분석만 지시, 코드 작성 금지</li>
+            <li>1단계: 설계안 먼저 받기 (파일 구조/API 흐름)</li>
+            <li>2단계: 작업을 기능 단위로 분할 실행</li>
+            <li>3단계: 테스트/린트/타입체크 자동 검증</li>
+            <li>4단계: 리뷰 프롬프트로 회귀 위험 점검</li>
+        </ul>
+        <pre>먼저 구조를 분석해. 아직 코드는 작성하지 마.
+설계안을 확인한 뒤 승인하면 구현을 시작해.</pre>
+    </section>
+
+    <section id="s5">
+        <div class="eyebrow">Prompt Design</div>
+        <h2>작업 지시서 템플릿</h2>
+        <pre>목표: 로그인 API에 JWT refresh token 추가
+범위: auth/*, api/login.ts만 수정
+비범위: frontend/*, DB schema 변경 금지
+완료조건: 테스트 3개 추가, 기존 테스트 통과, lint 0
+실행순서: 코드 수정 -> 테스트 -> 변경 요약
+출력형식: 변경 파일 + 변경 이유 + 남은 리스크</pre>
+        <p class="term"><strong>팁:</strong> "어떻게"보다 "어디까지"를 먼저 고정하면 품질이 안정된다.</p>
+    </section>
+
+    <section id="s6">
+        <div class="eyebrow">CLI Pattern</div>
+        <h2>CLI 기본 사용 루프</h2>
+        <pre>codex .
+# 또는 claude-code .
+
+read all files and summarize
+analyze architecture first, no coding yet
+implement task 1 only
+run tests and fix failures
+summarize changed files</pre>
+        <ul>
+            <li>항상 탐색 -> 구현 -> 검증 -> 요약 순서 유지</li>
+            <li>한 세션에서 한 목표만 다뤄 맥락 오염 방지</li>
+        </ul>
+    </section>
+
+    <section id="s7">
+        <div class="eyebrow">Task Decomposition</div>
+        <h2>큰 기능을 쪼개는 예시</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>나쁜 지시</h3>
+                <p>"인증 기능 전체 만들어줘"</p>
+            </div>
+            <div class="card">
+                <h3>좋은 지시</h3>
+                <p>1) DB schema
+2) API route
+3) auth middleware
+4) 테스트
+5) 문서 업데이트</p>
+            </div>
+        </div>
+        <p class="term"><strong>효과:</strong> 실패 지점 분리, 롤백 용이, 리뷰 속도 향상.</p>
+    </section>
+
+    <section id="s8">
+        <div class="eyebrow">Role Split</div>
+        <h2>역할 기반 에이전트 운영</h2>
+        <div class="grid-3">
+            <div class="card"><h3>Planner</h3><p>요구사항 해석, 설계안 작성, 작업 분해</p><span class="tag">설계</span></div>
+            <div class="card"><h3>Builder</h3><p>코드 수정, 테스트 실행, 에러 해결</p><span class="tag">구현</span></div>
+            <div class="card"><h3>Reviewer</h3><p>회귀, 보안, 누락 테스트 검토</p><span class="tag">리뷰</span></div>
+        </div>
+        <p class="term"><strong>원칙:</strong> 구현 프롬프트와 리뷰 프롬프트를 분리한다.</p>
+    </section>
+
+    <section id="s9">
+        <div class="eyebrow">Context Files</div>
+        <h2>컨텍스트 파일 운영</h2>
+        <ul>
+            <li>README: 프로젝트 개요, 실행 방법, 테스트 커맨드</li>
+            <li>AGENTS.md: 코딩 규칙, 금지사항, 브랜치 전략</li>
+            <li>CONTRIBUTING: PR 기준, 코드 스타일, 리뷰 기준</li>
+        </ul>
+        <pre>AGENTS.md 예시
+- backend/*만 수정 가능
+- 하드코딩 금지
+- 예외 처리 필수
+- 테스트 실패 시 종료</pre>
+    </section>
+
+    <section id="s10">
+        <div class="eyebrow">Tooling</div>
+        <h2>도구별 체감 차이 (실무 관점)</h2>
+        <div class="grid-3">
+            <div class="card"><h3>Codex 계열</h3><p>정교한 수정 루프와 테스트-수정 반복에 강함</p></div>
+            <div class="card"><h3>Claude Code 계열</h3><p>긴 문맥 이해, 설계/리팩토링, 대규모 변경 파악에 강함</p></div>
+            <div class="card"><h3>IDE Agent 계열</h3><p>인라인 편집과 즉시 피드백이 빠르며 팀 적응이 쉬움</p></div>
+        </div>
+        <p class="term"><strong>결론:</strong> 도구보다 운영 방식이 성과를 좌우한다.</p>
+    </section>
+
+    <section id="s11">
+        <div class="eyebrow">Quality</div>
+        <h2>검증 없는 자동화는 사고다</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>필수 게이트</h3>
+                <ul>
+                    <li>테스트 실패 시 작업 중단</li>
+                    <li>lint/type error 0 유지</li>
+                    <li>변경 파일별 이유 보고</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>리뷰 체크</h3>
+                <ul>
+                    <li>회귀 위험</li>
+                    <li>예외 처리 누락</li>
+                    <li>경계 케이스 테스트</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="s12">
+        <div class="eyebrow">Limits</div>
+        <h2>반드시 알아야 할 한계</h2>
+        <ul>
+            <li>장시간 세션에서 맥락 손실이 발생할 수 있다</li>
+            <li>존재하지 않는 API/옵션을 제시할 수 있다</li>
+            <li>터미널/환경 의존 이슈에서 실패율이 올라간다</li>
+            <li>결과를 과신하면 결함이 누적된다</li>
+        </ul>
+        <p class="sub"><span class="warn">정답:</span> 작은 작업 단위 + 빈번한 검증 + 인간 승인.</p>
+    </section>
+
+    <section id="s13">
+        <div class="eyebrow">Security</div>
+        <h2>보안/정책 운영 기준</h2>
+        <ul>
+            <li>민감정보(토큰, 고객 데이터) 프롬프트 입력 금지</li>
+            <li>허용 디렉토리/명령 화이트리스트 운영</li>
+            <li>로그 감사 가능하게 지시/변경 이력 보관</li>
+            <li>외부 모델 데이터 보존 정책 사전 확인</li>
+        </ul>
+    </section>
+
+    <section id="s14">
+        <div class="eyebrow">People</div>
+        <h2>잘 쓰는 팀 vs 망하는 팀</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>망하는 팀</h3>
+                <p>큰 작업 일괄 지시, 모호한 요구, 검증 생략, 방식 제각각</p>
+            </div>
+            <div class="card">
+                <h3>잘 쓰는 팀</h3>
+                <p>작은 단위 지시, 명확한 완료조건, 테스트 자동화, 공통 템플릿</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="s15">
+        <div class="eyebrow">Metrics</div>
+        <h2>성과 측정 지표</h2>
+        <ul>
+            <li>TTR: 이슈 해결 리드타임</li>
+            <li>FTR: 첫 시도 통과율</li>
+            <li>RR: 회귀율</li>
+            <li>PR 왕복 횟수: 커뮤니케이션/품질 성숙도 지표</li>
+            <li>작업당 비용: 모델/세션 운영 최적화 지표</li>
+        </ul>
+    </section>
+
+    <section id="s16">
+        <div class="eyebrow">Rollout</div>
+        <h2>조직 도입 로드맵</h2>
+        <div class="grid-3">
+            <div class="card"><h3>파일럿</h3><p>2주, 작은 백로그 중심</p></div>
+            <div class="card"><h3>표준화</h3><p>템플릿, 규칙, 품질 게이트 확정</p></div>
+            <div class="card"><h3>확장</h3><p>CI 연동, 비용/성과 모니터링</p></div>
+        </div>
+        <p class="term"><strong>핵심:</strong> 개인 요령이 아니라 팀 표준 프로세스로 정착.</p>
+    </section>
+
+    <section id="s17">
+        <div class="eyebrow">Ready-to-Use</div>
+        <h2>바로 쓰는 실전 프롬프트</h2>
+        <pre>너는 backend engineer야.
+목표: 주문 취소 API 오류 수정.
+범위: services/order/* 만 수정.
+제약: DB schema 변경 금지.
+완료조건: 테스트 추가 2개, 전체 테스트 통과, lint 0.
+순서: 분석 -> 계획 보고 -> 구현 -> 테스트 -> 요약.
+출력: 변경 파일, 이유, 남은 리스크 3개.</pre>
+    </section>
+
+    <section id="s18">
+        <div class="eyebrow">Closing</div>
+        <h2>한 줄 결론</h2>
+        <p class="sub"><span class="hl">AI coding agent는 코드 생성기가 아니라, 관리해야 하는 실행형 팀원이다.</span></p>
+        <div class="rule"></div>
+        <ul>
+            <li>작게 쪼개고</li>
+            <li>명확하게 지시하고</li>
+            <li>항상 검증하라</li>
+        </ul>
+    </section>
+</div>
+
+<div id="counter">1 / 18</div>
+<div id="progress"></div>
+<div class="hint">← 이전 / → 다음</div>
+
+<script>
+    const slides = document.querySelectorAll('section');
+    const counter = document.getElementById('counter');
+    const progress = document.getElementById('progress');
+    const total = slides.length;
+    let current = 0;
+
+    function goTo(index) {
+        if (index < 0 || index >= total) return;
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        counter.textContent = `${current + 1} / ${total}`;
+        progress.style.width = `${((current + 1) / total) * 100}%`;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') next();
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') prev();
+    });
+
+    goTo(0);
+</script>
+</body>
+</html>
