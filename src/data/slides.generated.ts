@@ -12,6 +12,13 @@ export const generatedPresentations: PresentationMeta[] = [
     thumbnail: "/slides/.thumbnails/ai-cli-start-guide.png",
   },
   {
+    id: "ai-harness-ide-intro",
+    title: "Ai Harness Ide Intro",
+    path: "/slides/ai-harness-ide-intro.html",
+    updatedAt: "2026-04-20",
+    thumbnail: "/slides/.thumbnails/ai-harness-ide-intro.png",
+  },
+  {
     id: "ai-mentoring-1",
     title: "Ai Mentoring (1)",
     path: "/slides/ai-mentoring%20(1).html",
