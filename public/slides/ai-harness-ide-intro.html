@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Harness IDE 프로젝트 소개</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-0: #08111f;
+        --bg-1: #0e1f37;
+        --ink: #eff6ff;
+        --muted: #a4b3cb;
+        --line: #254264;
+        --card: rgba(15, 31, 53, 0.78);
+        --accent: #47d8b8;
+        --accent-2: #ffcc62;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        color: var(--ink);
+        font-family: "Noto Sans KR", sans-serif;
+        background:
+          radial-gradient(circle at 12% 16%, rgba(71, 216, 184, 0.2) 0%, rgba(8, 17, 31, 0) 35%),
+          radial-gradient(circle at 87% 20%, rgba(255, 204, 98, 0.18) 0%, rgba(8, 17, 31, 0) 38%),
+          linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 60%, #07101b 100%);
+      }
+
+      .deck {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        transition: transform 0.45s ease;
+      }
+
+      .slide {
+        flex: 0 0 100vw;
+        height: 100vh;
+        padding: 8vh 7vw 14vh;
+        display: grid;
+        align-content: center;
+        gap: 1.4rem;
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.35rem 0.75rem;
+        border: 1px solid #3b5f84;
+        border-radius: 999px;
+        background: rgba(8, 18, 33, 0.55);
+        color: #d2e0f2;
+        font-size: 0.78rem;
+        letter-spacing: 0.05em;
+      }
+
+      .pulse {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 0 rgba(71, 216, 184, 0.8);
+        animation: pulse 1.8s infinite;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      li {
+        margin: 0;
+      }
+
+      h1,
+      h2 {
+        font-family: "Space Grotesk", "Noto Sans KR", sans-serif;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 5.5vw, 4.8rem);
+      }
+
+      h2 {
+        font-size: clamp(1.7rem, 4.3vw, 3.2rem);
+      }
+
+      .lead {
+        max-width: 980px;
+        font-size: clamp(1rem, 1.8vw, 1.38rem);
+        line-height: 1.7;
+        color: #dce8f8;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr;
+        gap: 1.2rem;
+        align-items: stretch;
+      }
+
+      .hero-box {
+        border: 1px solid var(--line);
+        border-radius: 1.25rem;
+        background: var(--card);
+        backdrop-filter: blur(4px);
+        padding: 1.1rem;
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .kpi {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        color: var(--accent-2);
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.9rem;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        background: var(--card);
+        padding: 1rem;
+        display: grid;
+        gap: 0.55rem;
+        min-height: 150px;
+      }
+
+      .card h3 {
+        font-size: 1.05rem;
+        color: #f3f8ff;
+      }
+
+      .card p,
+      li {
+        color: var(--muted);
+        font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+        line-height: 1.64;
+      }
+
+      ul {
+        padding-left: 1.1rem;
+        display: grid;
+        gap: 0.45rem;
+        max-width: 970px;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.7rem;
+      }
+
+      .flow .card,
+      .timeline .card {
+        min-height: 120px;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 1px solid #2f4f71;
+        background: rgba(8, 17, 31, 0.75);
+        border-radius: 999px;
+        padding: 0.45rem 0.55rem;
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .btn {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        font-size: 1rem;
+        cursor: pointer;
+        background: #163252;
+        color: #dff1ff;
+      }
+
+      .btn:hover {
+        background: #21456f;
+      }
+
+      .status {
+        min-width: 74px;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #bfd0e8;
+      }
+
+      .hint {
+        font-size: 0.76rem;
+        color: #96abc8;
+      }
+
+      .slide > * {
+        animation: reveal 0.55s ease both;
+      }
+
+      .slide > *:nth-child(2) {
+        animation-delay: 0.06s;
+      }
+
+      .slide > *:nth-child(3) {
+        animation-delay: 0.12s;
+      }
+
+      .slide > *:nth-child(4) {
+        animation-delay: 0.18s;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(71, 216, 184, 0.65);
+        }
+        70% {
+          box-shadow: 0 0 0 8px rgba(71, 216, 184, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(71, 216, 184, 0);
+        }
+      }
+
+      @media (max-width: 980px) {
+        .slide {
+          padding: 7vh 6vw 15vh;
+          gap: 1rem;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .cards,
+        .timeline,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="deck" class="deck">
+      <section class="slide">
+        <div class="meta">
+          <span class="tag"><span class="pulse"></span> 01 / 08 PROJECT INTRO</span>
+        </div>
+        <h1>AI Harness IDE<br />복잡한 AI 구축을<br />작업 가능한 흐름으로</h1>
+        <div class="hero">
+          <div class="hero-box">
+            <p class="lead">
+              우리 프로젝트는 프롬프트, 모델 선택, 도구 연결, 평가, 배포를 하나의 IDE 안에서
+              설계하고 실행하는 <strong>AI Harness 전용 개발 환경</strong>입니다.
+            </p>
+            <p class="lead">핵심 목표는 "잘 쓰는 AI"가 아니라 "재현 가능한 AI 시스템"입니다.</p>
+          </div>
+          <div class="hero-box">
+            <p>Mission</p>
+            <p class="kpi">3x Faster</p>
+            <p>실험-검증-배포 리드타임 단축</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">02 / 08 PROBLEM</span>
+        </div>
+        <h2>왜 지금 필요한가</h2>
+        <ul>
+          <li>AI 앱 개발은 코드, 프롬프트, 벡터DB, 에이전트 로직이 분산되어 관리됩니다.</li>
+          <li>성능 저하가 생겨도 어떤 변경이 원인인지 추적하기 어렵습니다.</li>
+          <li>팀 협업 시 실험 기록이 남지 않아 동일한 실패를 반복합니다.</li>
+          <li>결과적으로 PoC는 빠르지만 프로덕션 전환은 느립니다.</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">03 / 08 SOLUTION</span>
+        </div>
+        <h2>AI Harness IDE가 제공하는 것</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Visual Harness Builder</h3>
+            <p>모델, 툴, 메모리, 평가 노드를 연결해 실행 흐름을 시각적으로 구성</p>
+          </article>
+          <article class="card">
+            <h3>Prompt + Code Co-Edit</h3>
+            <p>프롬프트와 앱 코드를 같은 워크스페이스에서 버전 관리</p>
+          </article>
+          <article class="card">
+            <h3>Eval-first Workflow</h3>
+            <p>테스트셋/메트릭 기반으로 품질 변화 자동 리포트</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">04 / 08 CORE FEATURES</span>
+        </div>
+        <h2>핵심 기능</h2>
+        <div class="flow">
+          <article class="card">
+            <h3>1. 템플릿 시작</h3>
+            <p>RAG, Agent, Chatbot 템플릿으로 빠른 시작</p>
+          </article>
+          <article class="card">
+            <h3>2. 실시간 트레이스</h3>
+            <p>토큰 사용량, 지연 시간, 에러 포인트를 단계별 추적</p>
+          </article>
+          <article class="card">
+            <h3>3. 데이터셋 버전</h3>
+            <p>실험에 사용한 문서/질문셋을 자동 스냅샷</p>
+          </article>
+          <article class="card">
+            <h3>4. 팀 리뷰</h3>
+            <p>변경점 diff와 코멘트 기반 협업</p>
+          </article>
+          <article class="card">
+            <h3>5. 원클릭 배포</h3>
+            <p>검증 통과 Harness만 스테이징/프로덕션 배포</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">05 / 08 ARCHITECTURE</span>
+        </div>
+        <h2>기술 아키텍처</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Editor Layer</h3>
+            <p>프로젝트 구조/노드 그래프/프롬프트 편집기</p>
+          </article>
+          <article class="card">
+            <h3>Runtime Layer</h3>
+            <p>모델 라우팅, Tool Calling, Guardrail, 캐시 처리</p>
+          </article>
+          <article class="card">
+            <h3>Observability Layer</h3>
+            <p>로그, 평가, 비용 분석, 실험 리플레이</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">06 / 08 TARGET USERS</span>
+        </div>
+        <h2>누가 가장 크게 이득을 보는가</h2>
+        <ul>
+          <li>사내 AI 기능을 빠르게 제품에 붙여야 하는 스타트업 개발팀</li>
+          <li>PoC 이후 품질 관리와 재현성 문제를 겪는 AI 엔지니어 조직</li>
+          <li>비개발 직군과 함께 프롬프트/실험 협업이 필요한 PM 조직</li>
+        </ul>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">07 / 08 ROADMAP</span>
+        </div>
+        <h2>실행 로드맵</h2>
+        <div class="timeline">
+          <article class="card">
+            <h3>Q2</h3>
+            <p>MVP 완성: Builder + Trace + 기본 Eval</p>
+          </article>
+          <article class="card">
+            <h3>Q3</h3>
+            <p>팀 협업 기능: 리뷰/권한/변경 이력 강화</p>
+          </article>
+          <article class="card">
+            <h3>Q4</h3>
+            <p>배포 자동화 및 엔터프라이즈 보안 옵션</p>
+          </article>
+          <article class="card">
+            <h3>Q1 Next</h3>
+            <p>마켓플레이스: Harness 템플릿 공유 생태계</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="meta">
+          <span class="tag">08 / 08 CLOSING</span>
+        </div>
+        <h2>AI 개발의 병목은 모델이 아니라 워크플로우입니다</h2>
+        <p class="lead">
+          AI Harness IDE는 실험을 자산으로 만들고, 품질을 반복 가능하게 만들며,
+          팀이 더 빠르게 프로덕션에 도달하도록 돕습니다.
+        </p>
+        <p class="lead"><strong>“Build once, evaluate always, deploy confidently.”</strong></p>
+      </section>
+    </main>
+
+    <div class="footer">
+      <button class="btn" id="prev" aria-label="이전 슬라이드">◀</button>
+      <span class="status" id="status">1 / 8</span>
+      <button class="btn" id="next" aria-label="다음 슬라이드">▶</button>
+      <span class="hint">키보드: ← / →</span>
+    </div>
+
+    <script>
+      const deck = document.getElementById("deck");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const status = document.getElementById("status");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      let index = 0;
+
+      function render() {
+        deck.style.transform = `translateX(-${index * 100}vw)`;
+        status.textContent = `${index + 1} / ${slides.length}`;
+      }
+
+      function go(step) {
+        index = Math.max(0, Math.min(slides.length - 1, index + step));
+        render();
+      }
+
+      prev.addEventListener("click", () => go(-1));
+      next.addEventListener("click", () => go(1));
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown") go(1);
+        if (e.key === "ArrowLeft" || e.key === "PageUp") go(-1);
+      });
+
+      render();
+    </script>
+  </body>
+</html>
