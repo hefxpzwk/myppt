@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Harness IDE 프로젝트 소개</title>
+    <title>FY 개발 단계 중간 보고</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -291,156 +291,155 @@
     <main id="deck" class="deck">
       <section class="slide">
         <div class="meta">
-          <span class="tag"><span class="pulse"></span> 01 / 08 PROJECT INTRO</span>
+          <span class="tag"><span class="pulse"></span> 01 / 08 FY 소개</span>
         </div>
-        <h1>AI Harness IDE<br />복잡한 AI 구축을<br />작업 가능한 흐름으로</h1>
+        <h1>FY를 제대로 이해한<br />개발 단계 중간 보고</h1>
         <div class="hero">
           <div class="hero-box">
             <p class="lead">
-              우리 프로젝트는 프롬프트, 모델 선택, 도구 연결, 평가, 배포를 하나의 IDE 안에서
-              설계하고 실행하는 <strong>AI Harness 전용 개발 환경</strong>입니다.
+              FY의 목적은 코딩 도구가 아니라 <strong>개발 실행 품질을 표준화하는 생산성 인프라</strong>를 만드는 것입니다.
             </p>
-            <p class="lead">핵심 목표는 "잘 쓰는 AI"가 아니라 "재현 가능한 AI 시스템"입니다.</p>
+            <p class="lead">지금 단계는 기능 완성보다, 팀이 같은 기준으로 시작하고 개선하는 프레임워크 정착에 있습니다.</p>
           </div>
           <div class="hero-box">
-            <p>Mission</p>
-            <p class="kpi">3x Faster</p>
-            <p>실험-검증-배포 리드타임 단축</p>
+            <p>현재 상태</p>
+            <p class="kpi">Build Mode</p>
+            <p>핵심 스크립트/골격 완료, 프로젝트 문서 본문 작성 진행 전</p>
           </div>
         </div>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">02 / 08 PROBLEM</span>
+          <span class="tag">02 / 08 핵심 목적</span>
         </div>
-        <h2>왜 지금 필요한가</h2>
+        <h2>FY 핵심 목적 4가지</h2>
         <ul>
-          <li>AI 앱 개발은 코드, 프롬프트, 벡터DB, 에이전트 로직이 분산되어 관리됩니다.</li>
-          <li>성능 저하가 생겨도 어떤 변경이 원인인지 추적하기 어렵습니다.</li>
-          <li>팀 협업 시 실험 기록이 남지 않아 동일한 실패를 반복합니다.</li>
-          <li>결과적으로 PoC는 빠르지만 프로덕션 전환은 느립니다.</li>
+          <li><strong>실행 표준화:</strong> `setup`, `doctor`, `launch/exec`로 시작/점검/실행 절차 통일</li>
+          <li><strong>문서 기반 개발:</strong> 코드보다 문서 컨텍스트를 먼저 로딩해 의사결정 일관성 확보</li>
+          <li><strong>스킬 온디맨드 확장:</strong> 필요한 스킬만 설치해 프로젝트 맞춤형으로 확장</li>
+          <li><strong>병렬 수정 안정성:</strong> 동시 수정 시 충돌 감지/순서 제어/검증 체계 확보</li>
         </ul>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">03 / 08 SOLUTION</span>
+          <span class="tag">03 / 08 현재 단계</span>
         </div>
-        <h2>AI Harness IDE가 제공하는 것</h2>
+        <h2>지금 어디까지 왔는가</h2>
         <div class="cards">
           <article class="card">
-            <h3>Visual Harness Builder</h3>
-            <p>모델, 툴, 메모리, 평가 노드를 연결해 실행 흐름을 시각적으로 구성</p>
+            <h3>개발 인프라 단계</h3>
+            <p>FY는 기능 개발보다 생산성 기반을 먼저 깔고 있는 단계</p>
           </article>
           <article class="card">
-            <h3>Prompt + Code Co-Edit</h3>
-            <p>프롬프트와 앱 코드를 같은 워크스페이스에서 버전 관리</p>
+            <h3>핵심 스크립트 준비</h3>
+            <p>`fy` 실행 진입점과 점검 체계가 이미 구성됨</p>
           </article>
           <article class="card">
-            <h3>Eval-first Workflow</h3>
-            <p>테스트셋/메트릭 기반으로 품질 변화 자동 리포트</p>
+            <h3>문서 본문 미작성</h3>
+            <p>`docs-ex`는 대부분 0바이트로, 컨텍스트 확정이 다음 과제</p>
           </article>
         </div>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">04 / 08 CORE FEATURES</span>
+          <span class="tag">04 / 08 구축 기반</span>
         </div>
-        <h2>핵심 기능</h2>
+        <h2>지금까지 세팅된 기반</h2>
         <div class="flow">
           <article class="card">
-            <h3>1. 템플릿 시작</h3>
-            <p>RAG, Agent, Chatbot 템플릿으로 빠른 시작</p>
+            <h3>1. setup</h3>
+            <p>상태 디렉토리와 기본 ignore 초기화</p>
           </article>
           <article class="card">
-            <h3>2. 실시간 트레이스</h3>
-            <p>토큰 사용량, 지연 시간, 에러 포인트를 단계별 추적</p>
+            <h3>2. doctor</h3>
+            <p>필수 파일, 로그인, 스모크 테스트 점검</p>
           </article>
           <article class="card">
-            <h3>3. 데이터셋 버전</h3>
-            <p>실험에 사용한 문서/질문셋을 자동 스냅샷</p>
+            <h3>3. launch / exec</h3>
+            <p>컨텍스트 주입형 실행 흐름 확보</p>
           </article>
           <article class="card">
-            <h3>4. 팀 리뷰</h3>
-            <p>변경점 diff와 코멘트 기반 협업</p>
+            <h3>4. 컨텍스트 병합</h3>
+            <p>global/core + standards + project 문서 합쳐 전달</p>
           </article>
           <article class="card">
-            <h3>5. 원클릭 배포</h3>
-            <p>검증 통과 Harness만 스테이징/프로덕션 배포</p>
+            <h3>5. 운영 원칙</h3>
+            <p>작은 변경, 문서 동기화, 오버라이드 우선 규칙 반영</p>
           </article>
         </div>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">05 / 08 ARCHITECTURE</span>
+          <span class="tag">05 / 08 강점</span>
         </div>
-        <h2>기술 아키텍처</h2>
+        <h2>현재 구조의 핵심 강점</h2>
         <div class="cards">
           <article class="card">
-            <h3>Editor Layer</h3>
-            <p>프로젝트 구조/노드 그래프/프롬프트 편집기</p>
+            <h3>시작 품질 균등화</h3>
+            <p>개인 숙련도 편차와 무관하게 개발 시작 품질을 일정하게 유지</p>
           </article>
           <article class="card">
-            <h3>Runtime Layer</h3>
-            <p>모델 라우팅, Tool Calling, Guardrail, 캐시 처리</p>
+            <h3>문서-코드 정합성</h3>
+            <p>개인 습관이 아니라 프로세스로 정합성을 관리할 수 있음</p>
           </article>
           <article class="card">
-            <h3>Observability Layer</h3>
-            <p>로그, 평가, 비용 분석, 실험 리플레이</p>
+            <h3>전략 명확성</h3>
+            <p>Build Mode(초기 완성)와 Refine Mode(병렬 개선) 역할이 분명함</p>
           </article>
         </div>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">06 / 08 TARGET USERS</span>
+          <span class="tag">06 / 08 핵심 갭</span>
         </div>
-        <h2>누가 가장 크게 이득을 보는가</h2>
+        <h2>현재 갭 (중요)</h2>
         <ul>
-          <li>사내 AI 기능을 빠르게 제품에 붙여야 하는 스타트업 개발팀</li>
-          <li>PoC 이후 품질 관리와 재현성 문제를 겪는 AI 엔지니어 조직</li>
-          <li>비개발 직군과 함께 프롬프트/실험 협업이 필요한 PM 조직</li>
+          <li><strong>`project-context.md` 비어 있음:</strong> Goal/Scope/Constraints 합의 부재</li>
+          <li><strong>`project-overrides.md` 비어 있음:</strong> 테스트/배포/보안 예외 기준 미정</li>
+          <li><strong>`docs-ex` 대부분 비어 있음:</strong> 팀 공유, 온보딩, 발표 근거 문서 부족</li>
         </ul>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">07 / 08 ROADMAP</span>
+          <span class="tag">07 / 08 우선순위</span>
         </div>
-        <h2>실행 로드맵</h2>
+        <h2>다음 단계 실행 우선순위</h2>
         <div class="timeline">
           <article class="card">
-            <h3>Q2</h3>
-            <p>MVP 완성: Builder + Trace + 기본 Eval</p>
+            <h3>1순위</h3>
+            <p>`project-context` 확정: Goal, Scope, Stakeholders, Constraints</p>
           </article>
           <article class="card">
-            <h3>Q3</h3>
-            <p>팀 협업 기능: 리뷰/권한/변경 이력 강화</p>
+            <h3>2순위</h3>
+            <p>`project-overrides` 확정: 테스트, 배포, 모니터링, SLA, 보안</p>
           </article>
           <article class="card">
-            <h3>Q4</h3>
-            <p>배포 자동화 및 엔터프라이즈 보안 옵션</p>
+            <h3>3순위</h3>
+            <p>`docs-ex` 핵심 문서 작성: README, ARCHITECTURE, PLANS</p>
           </article>
           <article class="card">
-            <h3>Q1 Next</h3>
-            <p>마켓플레이스: Harness 템플릿 공유 생태계</p>
+            <h3>4순위</h3>
+            <p>Refine Mode 충돌관리 설계를 실제 구현 항목으로 분해</p>
           </article>
         </div>
       </section>
 
       <section class="slide">
         <div class="meta">
-          <span class="tag">08 / 08 CLOSING</span>
+          <span class="tag">08 / 08 마무리</span>
         </div>
-        <h2>AI 개발의 병목은 모델이 아니라 워크플로우입니다</h2>
+        <h2>FY의 본질은 도구가 아니라 팀 실행 체계입니다</h2>
         <p class="lead">
-          AI Harness IDE는 실험을 자산으로 만들고, 품질을 반복 가능하게 만들며,
-          팀이 더 빠르게 프로덕션에 도달하도록 돕습니다.
+          지금은 기능 데모보다 기준 정착이 중요한 시점입니다.
+          기준 문서만 채워지면, Build Mode에서 Refine Mode로 안정적으로 넘어갈 수 있습니다.
         </p>
-        <p class="lead"><strong>“Build once, evaluate always, deploy confidently.”</strong></p>
+        <p class="lead"><strong>"시작을 표준화하고, 문서로 정렬하고, 병렬 개선을 안전하게 만든다."</strong></p>
       </section>
     </main>
 

@@ -15,7 +15,7 @@ export const generatedPresentations: PresentationMeta[] = [
     id: "ai-harness-ide-intro",
     title: "Ai Harness Ide Intro",
     path: "/slides/ai-harness-ide-intro.html",
-    updatedAt: "2026-04-20",
+    updatedAt: "2026-04-29",
     thumbnail: "/slides/.thumbnails/ai-harness-ide-intro.png",
   },
   {
